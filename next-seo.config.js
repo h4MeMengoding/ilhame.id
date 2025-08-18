@@ -1,7 +1,7 @@
-const canonicalUrl = 'https://ilhamsh.my.id';
-const metaImage = 'https://i.imgur.com/xLmYv6C.png';
+const canonicalUrl = 'https://ilhame.id';
+const metaImage = 'https://i.imgur.com/fj8knf5.png';
 const metaDescription =
-  'Someone who likes playing with cameras and making videos, alternating coding with self-study';
+  'Passionate about videography, photography, and creative editing, combining my love for cameras with storytelling through visuals.';
 
 const defaultSEOConfig = {
   defaultTitle: 'Ilham Shofa - Personal Website',
@@ -15,24 +15,24 @@ const defaultSEOConfig = {
     images: [
       {
         url: metaImage,
-        alt: 'ilhamsh.my.id og-image',
+        alt: 'ilhame.id og-image',
         width: 800,
         height: 600,
       },
       {
         url: metaImage,
-        alt: 'ilhamsh.my.id og-image',
+        alt: 'ilhame.id og-image',
         width: 1200,
         height: 630,
       },
       {
         url: metaImage,
-        alt: 'ilhamsh.my.id og-image',
+        alt: 'ilhame.id og-image',
         width: 1600,
         height: 900,
       },
     ],
-    site_name: 'ilhamsh.my.id',
+    site_name: 'ilhame.id',
   },
   twitter: {
     handle: '@handle',
