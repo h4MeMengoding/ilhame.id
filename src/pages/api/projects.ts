@@ -14,7 +14,11 @@ export default async function handler(
   res: NextApiResponse<Data>,
 ) {
   try {
-    const response = await prisma.projects.findMany();
+    const response = await prisma.projects.findMany({
+      orderBy: {
+        updated_at: 'desc',
+      },
+    });
     res.status(200).json({ status: true, data: response });
   } catch (error) {
     res.status(200).json({ status: false, error: error });
