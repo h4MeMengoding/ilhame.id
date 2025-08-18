@@ -57,6 +57,7 @@ export const fetchGithubData = async (
 
     return { status, data: responseJson.data.user };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.warn('GitHub API request failed:', error);
     return { status: 500, data: {} };
   }

@@ -36,6 +36,7 @@ export const getStaticProps: GetStaticProps = async () => {
   try {
     githubUserPersonal = await getGithubUser('personal');
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.warn('Failed to fetch GitHub data during build:', error);
     githubUserPersonal = { data: null };
   }
