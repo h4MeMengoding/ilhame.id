@@ -30,3 +30,33 @@ model contentmeta {
   views       Int      @default(0)
   updated_at  DateTime @default(now())
 }
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  password    String
+  name        String?
+  avatar_url  String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+  is_active   Boolean  @default(true)
+
+  @@map("users")
+}
+
+model ShortUrl {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  original_url String  @db.Text
+  title       String?
+  description String?
+  clicks      Int      @default(0)
+  user_id     String?
+  user_email  String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+  expires_at  DateTime?
+  is_active   Boolean  @default(true)
+
+  @@map("shorturls")
+}

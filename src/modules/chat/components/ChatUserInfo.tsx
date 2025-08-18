@@ -1,14 +1,15 @@
 import clsx from 'clsx';
-import { signOut, useSession } from 'next-auth/react';
 import { HiOutlineLogout as SignOutIcon } from 'react-icons/hi';
 
+import { useAuth } from '@/common/context/AuthContext';
+
 const ChatUserInfo = ({ isWidget = false }: { isWidget?: boolean }) => {
-  const { data: session } = useSession();
+  const { user, logout } = useAuth();
 
-  const userName = session?.user?.name ?? null;
-  const userEmail = session?.user?.email ?? null;
+  const userName = user?.name ?? user?.email?.split('@')[0] ?? null;
+  const userEmail = user?.email ?? null;
 
-  return session ? (
+  return user ? (
     <div
       className={clsx(
         'flex flex-col items-start gap-2 px-4 pb-3 text-sm md:flex-row md:items-center',
@@ -24,7 +25,7 @@ const ChatUserInfo = ({ isWidget = false }: { isWidget?: boolean }) => {
         <>
           <div className='hidden text-neutral-500 md:block'>•</div>
           <div
-            onClick={() => signOut()}
+            onClick={() => logout()}
             className='flex cursor-pointer items-center gap-1 font-medium text-red-500'
             data-umami-event='Keluar Dari Halaman Chat'
           >

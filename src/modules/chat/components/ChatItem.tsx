@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
 import { FiTrash2 as DeleteIcon } from 'react-icons/fi';
 import { MdAdminPanelSettings as AdminIcon } from 'react-icons/md';
 
+import { useAuth } from '@/common/context/AuthContext';
 import { MessageProps } from '@/common/types/chat';
 
 import ChatTime from './ChatTime';
@@ -21,7 +21,7 @@ const ChatItem = ({
   created_at,
   onDelete,
 }: ChatItemProps) => {
-  const { data: session } = useSession();
+  const { user } = useAuth();
 
   const authorEmail = 'ilhamshofaa@gmail.com';
 
@@ -79,8 +79,7 @@ const ChatItem = ({
             {modifiedMessage}
           </p>
           <div className='flex items-center gap-3'>
-            {(session?.user?.email === email ||
-              session?.user?.email === authorEmail) && (
+            {(user?.email === email || user?.email === authorEmail) && (
               <DeleteIcon
                 size={17}
                 className='hidden cursor-pointer text-red-500 group-hover:flex'

@@ -1,10 +1,10 @@
 import AOS from 'aos';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
-import { SessionProvider } from 'next-auth/react';
 import { DefaultSeo } from 'next-seo';
 import { ThemeProvider } from 'next-themes';
 import { useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 import 'tailwindcss/tailwind.css';
 import 'aos/dist/aos.css';
@@ -12,6 +12,7 @@ import '@/common/styles/globals.css';
 
 import CommandPalette from '@/common/components/elements/CommandPalette';
 import Layout from '@/common/components/layouts';
+import { AuthProvider } from '@/common/context/AuthContext';
 import { CommandPaletteProvider } from '@/common/context/CommandPaletteContext';
 import {
   firaCode,
@@ -27,7 +28,7 @@ const ProgressBar = dynamic(
   { ssr: false },
 );
 
-const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
+const App = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
     AOS.init({
       duration: 800,
@@ -48,17 +49,53 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
         `}
       </style>
       <DefaultSeo {...defaultSEOConfig} />
-      <SessionProvider session={session}>
+      <AuthProvider>
         <ThemeProvider attribute='class' defaultTheme='dark'>
           <CommandPaletteProvider>
             <Layout>
               <CommandPalette />
               <ProgressBar />
               <Component {...pageProps} />
+              <Toaster
+                position='top-right'
+                toastOptions={{
+                  duration: 4000,
+                  className: '',
+                  style: {
+                    background: 'var(--toast-bg)',
+                    color: 'var(--toast-color)',
+                    border: '1px solid var(--toast-border)',
+                  },
+                  success: {
+                    duration: 3000,
+                    iconTheme: {
+                      primary: '#10B981',
+                      secondary: '#FFFFFF',
+                    },
+                  },
+                  error: {
+                    duration: 4000,
+                    iconTheme: {
+                      primary: '#EF4444',
+                      secondary: '#FFFFFF',
+                    },
+                  },
+                  loading: {
+                    duration: Infinity,
+                  },
+                }}
+                containerStyle={{
+                  top: 20,
+                  right: 20,
+                  zIndex: 9999,
+                }}
+                reverseOrder={false}
+                gutter={8}
+              />
             </Layout>
           </CommandPaletteProvider>
         </ThemeProvider>
-      </SessionProvider>
+      </AuthProvider>
     </>
   );
 };

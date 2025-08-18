@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-<url><loc>https://ilhame.id</loc><lastmod>2025-08-18T06:36:58.332Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://ilhame.id/about</loc><lastmod>2025-08-18T06:36:58.333Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://ilhame.id/blog</loc><lastmod>2025-08-18T06:36:58.333Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://ilhame.id/contact</loc><lastmod>2025-08-18T06:36:58.333Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://ilhame.id/dashboard</loc><lastmod>2025-08-18T06:36:58.333Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://ilhame.id/guestbook</loc><lastmod>2025-08-18T06:36:58.333Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://ilhame.id/learn</loc><lastmod>2025-08-18T06:36:58.333Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://ilhame.id/playground</loc><lastmod>2025-08-18T06:36:58.333Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://ilhame.id/projects</loc><lastmod>2025-08-18T06:36:58.333Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://ilhame.id/status</loc><lastmod>2025-08-18T06:36:58.333Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://ilhame.id/learn/js-fundamental</loc><lastmod>2025-08-18T06:36:58.333Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://ilhame.id/learn/problem-solving</loc><lastmod>2025-08-18T06:36:58.333Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id</loc><lastmod>2025-08-18T09:01:31.098Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/about</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/blog</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/contact</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/dashboard</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/guestbook</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/learn</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/login</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/playground</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/projects</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/register</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/status</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/url/dashboard</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/learn/js-fundamental</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://ilhame.id/learn/problem-solving</loc><lastmod>2025-08-18T09:01:31.099Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
 </urlset>

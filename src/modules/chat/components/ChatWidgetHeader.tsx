@@ -1,13 +1,14 @@
 import Router from 'next/router';
-import { signOut, useSession } from 'next-auth/react';
 import { BiMinus as MinimizeIcon } from 'react-icons/bi';
 import { HiOutlineLogout as SignOutIcon } from 'react-icons/hi';
 import { LuMaximize2 as MaximizeIcon } from 'react-icons/lu';
 import { MdClose as CloseIcon } from 'react-icons/md';
 
+import { useAuth } from '@/common/context/AuthContext';
 import useChatStore from '@/common/stores/useChatStore';
+
 const ChatWidgetHeader = () => {
-  const { data: session } = useSession();
+  const { user, logout } = useAuth();
   const { toggleChat } = useChatStore();
 
   const handleMaximize = () => Router.push('/guestbook');
@@ -43,9 +44,9 @@ const ChatWidgetHeader = () => {
         </div>
         <h4 className=' text-base'>Chat</h4>
       </div>
-      {session && (
+      {user && (
         <SignOutIcon
-          onClick={() => signOut()}
+          onClick={() => logout()}
           size={22}
           className='cursor-pointer text-red-400'
           data-umami-event='Keluar Dari Widget Chat'
