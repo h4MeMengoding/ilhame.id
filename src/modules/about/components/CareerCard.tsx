@@ -1,5 +1,4 @@
 import { differenceInMonths, differenceInYears, format } from 'date-fns';
-import { id } from 'date-fns/locale';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { BsBuildings as CompanyIcon } from 'react-icons/bs';

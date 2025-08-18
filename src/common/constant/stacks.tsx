@@ -1,5 +1,3 @@
-import { BsFillBootstrapFill } from 'react-icons/bs';
-import { BsCamera2 } from 'react-icons/bs';
 import {
   SiAdobe,
   SiAdobeaftereffects,
@@ -7,18 +5,11 @@ import {
   SiAdobephotoshop,
   SiAdobepremierepro,
   SiCanva,
-  SiFirebase,
   SiJavascript,
-  SiLaravel,
-  SiMui,
   SiNextdotjs,
-  SiNodedotjs,
-  SiPhp,
-  SiPrisma,
   SiReact,
   SiTailwindcss,
   SiTypescript,
-  SiVuedotjs,
   SiWordpress,
 } from 'react-icons/si';
 
@@ -29,37 +20,24 @@ export type stacksProps = {
 const iconSize = 20;
 
 export const STACKS: stacksProps = {
-  PHP: <SiPhp size={iconSize} className='text-blue-500' />,
-  JavaScript: <SiJavascript size={iconSize} className='text-yellow-400' />,
-  TypeScript: <SiTypescript size={iconSize} className='text-blue-400' />,
-  'Next.js': <SiNextdotjs size={iconSize} />,
-  'React.js': <SiReact size={iconSize} className='text-sky-500' />,
+  JavaScript: <SiJavascript size={iconSize} style={{ color: '#F7DF1E' }} />,
+  TypeScript: <SiTypescript size={iconSize} style={{ color: '#3178C6' }} />,
+  'Next.js': <SiNextdotjs size={iconSize} style={{ color: '#000000' }} />,
+  'React.js': <SiReact size={iconSize} style={{ color: '#61DAFB' }} />,
   TailwindCSS: <SiTailwindcss size={iconSize} className='text-cyan-300' />,
-  Bootstrap: (
-    <BsFillBootstrapFill size={iconSize} className='text-purple-500' />
-  ),
   WordPress: <SiWordpress size={iconSize} />,
-  Laravel: <SiLaravel size={iconSize} className='text-red-500' />,
-  'Material UI': <SiMui size={iconSize} className='text-sky-400' />,
-  Prisma: <SiPrisma size={iconSize} className='text-emerald-500' />,
-  Firebase: <SiFirebase size={iconSize} className='text-yellow-500' />,
-  'Vue.js': <SiVuedotjs size={iconSize} className='text-green-500' />,
-  'Node.js': <SiNodedotjs size={iconSize} className='text-green-600' />,
   Adobe: <SiAdobe size={iconSize} />,
-  Canva: <SiCanva size={iconSize} className='text-sky-400' />,
+  Canva: <SiCanva size={iconSize} style={{ color: '#00C4CC' }} />,
   'Adobe Premiere Pro': (
-    <SiAdobepremierepro size={iconSize} className='text-sky-400' />
+    <SiAdobepremierepro size={iconSize} style={{ color: '#9A9BFE' }} />
   ),
   'Adobe Audition': (
-    <SiAdobeaudition size={iconSize} className='text-sky-400' />
+    <SiAdobeaudition size={iconSize} style={{ color: '#9A9BFE' }} />
   ),
   'Adobe After Effects': (
-    <SiAdobeaftereffects size={iconSize} className='text-sky-400' />
+    <SiAdobeaftereffects size={iconSize} style={{ color: '#9A9BFE' }} />
   ),
   'Adobe Photoshop': (
-    <SiAdobephotoshop size={iconSize} className='text-sky-400' />
-  ),
-  'Director of Photography': (
-    <BsCamera2 size={iconSize} className='text-sky-400' />
+    <SiAdobephotoshop size={iconSize} style={{ color: '#9A9BFE' }} />
   ),
 };

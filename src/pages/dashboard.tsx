@@ -31,13 +31,20 @@ export default DashboardPage;
 
 export const getStaticProps: GetStaticProps = async () => {
   // const readStats = await getReadStats();
-  const githubUserPersonal = await getGithubUser('personal');
+  let githubUserPersonal;
+
+  try {
+    githubUserPersonal = await getGithubUser('personal');
+  } catch (error) {
+    console.warn('Failed to fetch GitHub data during build:', error);
+    githubUserPersonal = { data: null };
+  }
 
   return {
     props: {
       fallback: {
         // '/api/read-stats': readStats.data,
-        '/api/github?type=personal': githubUserPersonal?.data,
+        '/api/github?type=personal': githubUserPersonal?.data || null,
       },
     },
     revalidate: 1,

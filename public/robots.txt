@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://ilhamsh.my.id
+Host: https://ilhame.id
 
 # Sitemaps
-Sitemap: https://ilhamsh.my.id/sitemap.xml
+Sitemap: https://ilhame.id/sitemap.xml

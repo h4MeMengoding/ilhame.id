@@ -32,29 +32,34 @@ export const fetchGithubData = async (
   username: string,
   token: string | undefined,
 ) => {
-  const response = await axios.post(
-    GITHUB_USER_ENDPOINT,
-    {
-      query: GITHUB_USER_QUERY,
-      variables: {
-        username: username,
+  try {
+    const response = await axios.post(
+      GITHUB_USER_ENDPOINT,
+      {
+        query: GITHUB_USER_QUERY,
+        variables: {
+          username: username,
+        },
       },
-    },
-    {
-      headers: {
-        Authorization: `bearer ${token}`,
+      {
+        headers: {
+          Authorization: `bearer ${token}`,
+        },
       },
-    },
-  );
+    );
 
-  const status: number = response.status;
-  const responseJson = response.data;
+    const status: number = response.status;
+    const responseJson = response.data;
 
-  if (status > 400) {
-    return { status, data: {} };
+    if (status > 400) {
+      return { status, data: {} };
+    }
+
+    return { status, data: responseJson.data.user };
+  } catch (error) {
+    console.warn('GitHub API request failed:', error);
+    return { status: 500, data: {} };
   }
-
-  return { status, data: responseJson.data.user };
 };
 
 export const getGithubUser = async (type: string) => {
