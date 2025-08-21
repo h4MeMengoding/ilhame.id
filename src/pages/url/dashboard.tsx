@@ -1,4 +1,3 @@
-import { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import { NextSeo } from 'next-seo';
 import { FiLogOut, FiUser } from 'react-icons/fi';
@@ -7,6 +6,7 @@ import Breakline from '@/common/components/elements/Breakline';
 import Card from '@/common/components/elements/Card';
 import Container from '@/common/components/elements/Container';
 import PageHeading from '@/common/components/elements/PageHeading';
+import withAuth from '@/common/components/hoc/withAuth';
 import { useAuth } from '@/common/context/AuthContext';
 import UrlShortener from '@/modules/urlshortener';
 
@@ -74,21 +74,6 @@ const UrlDashboard = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const token = context.req.cookies.auth_token;
-
-  if (!token) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
-
-export default UrlDashboard;
+export default withAuth(UrlDashboard, {
+  redirectTo: '/login',
+});

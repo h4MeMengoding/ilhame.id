@@ -1,4 +1,3 @@
-import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
@@ -6,6 +5,7 @@ import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 import Container from '@/common/components/elements/Container';
+import withAuth from '@/common/components/hoc/withAuth';
 import { useAuth } from '@/common/context/AuthContext';
 
 const RegisterPage = () => {
@@ -188,21 +188,6 @@ const RegisterPage = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  // If user is already logged in, redirect to dashboard
-  const token = context.req.cookies.auth_token;
-  if (token) {
-    return {
-      redirect: {
-        destination: '/url/dashboard',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
-
-export default RegisterPage;
+export default withAuth(RegisterPage, {
+  redirectIfAuthenticated: true,
+});

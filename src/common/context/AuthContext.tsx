@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isAuthenticated = !!user;
 
-  // Check if user is logged in on mount
+  // Check if user is logged in on mount and when route changes
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
     if (token) {
@@ -51,19 +51,72 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (data.user) {
             setUser(data.user);
           } else {
+            // Token invalid or expired, clear storage and ensure user state is null
             localStorage.removeItem('auth_token');
+            document.cookie =
+              'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            setUser(null);
+
+            // Always redirect to home if on protected routes, regardless of current location
+            const protectedRoutes = ['/url/dashboard', '/dashboard'];
+            const currentPath = window.location.pathname;
+
+            if (
+              protectedRoutes.some((route) => currentPath.startsWith(route))
+            ) {
+              router.push('/');
+            }
           }
         })
         .catch(() => {
+          // Network error or token verification failed
           localStorage.removeItem('auth_token');
+          document.cookie =
+            'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          setUser(null);
+
+          // Always redirect to home if on protected routes
+          const protectedRoutes = ['/url/dashboard', '/dashboard'];
+          const currentPath = window.location.pathname;
+
+          if (protectedRoutes.some((route) => currentPath.startsWith(route))) {
+            router.push('/');
+          }
         })
         .finally(() => {
           setLoading(false);
         });
     } else {
+      setUser(null);
       setLoading(false);
     }
-  }, []);
+  }, [router]);
+
+  // Additional effect to handle page visibility change (when user comes back to tab)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && user) {
+        // Page became visible and user thinks they're logged in
+        // Quick check if token is still valid
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          setUser(null);
+          const protectedRoutes = ['/url/dashboard', '/dashboard'];
+          const currentPath = window.location.pathname;
+
+          if (protectedRoutes.some((route) => currentPath.startsWith(route))) {
+            router.push('/');
+          }
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [user, router]);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
@@ -120,11 +173,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
+    // Clear all authentication data
     localStorage.removeItem('auth_token');
     // Also remove cookie
     document.cookie =
       'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+
+    // Clear user state immediately
     setUser(null);
+
+    // Always redirect to homepage
     router.push('/');
   };
 
