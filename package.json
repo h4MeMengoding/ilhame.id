@@ -31,6 +31,7 @@
     "axios": "^1.7.4",
     "bcryptjs": "^3.0.2",
     "clsx": "^1.2.1",
+    "critters": "^0.0.25",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.1",
     "firebase": "^10.12.4",

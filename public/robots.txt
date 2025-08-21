@@ -1,6 +1,20 @@
 # *
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /url/dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /_next/
+Disallow: /admin
+
+# Googlebot
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /url/dashboard
 
 # Host
 Host: https://ilhame.id
