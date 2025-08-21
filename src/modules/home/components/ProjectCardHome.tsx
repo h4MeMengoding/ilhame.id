@@ -3,14 +3,11 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useState } from 'react';
 import { BsArrowRight as MoreIcon } from 'react-icons/bs';
-import { FaRegEye as ViewIcon } from 'react-icons/fa';
-import { HiOutlineClock as ClockIcon } from 'react-icons/hi';
 
 import Breakline from '@/common/components/elements/Breakline';
 import Card from '@/common/components/elements/Card';
 import Image from '@/common/components/elements/Image';
 import Tooltip from '@/common/components/elements/Tooltip';
-import { STACKS } from '@/common/constant/stacks';
 import { ProjectItemProps } from '@/common/types/projects';
 
 const ProjectCardHome = ({

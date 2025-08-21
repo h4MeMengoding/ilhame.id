@@ -1,3 +1,4 @@
+import { IoCamera } from 'react-icons/io5';
 import {
   SiAdobe,
   SiAdobeaftereffects,
@@ -39,5 +40,8 @@ export const STACKS: stacksProps = {
   ),
   'Adobe Photoshop': (
     <SiAdobephotoshop size={iconSize} style={{ color: '#9A9BFE' }} />
+  ),
+  'Director of Photography': (
+    <IoCamera size={iconSize} style={{ color: '#F0F0F0F0' }} />
   ),
 };

@@ -11,7 +11,6 @@ import Breakline from '@/common/components/elements/Breakline';
 import Card from '@/common/components/elements/Card';
 import Image from '@/common/components/elements/Image';
 import Tooltip from '@/common/components/elements/Tooltip';
-import { STACKS } from '@/common/constant/stacks';
 import { formatDate } from '@/common/helpers';
 import { ProjectItemProps } from '@/common/types/projects';
 
