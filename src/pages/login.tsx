@@ -33,7 +33,7 @@ const LoginPage = () => {
       const success = await login(formData.email, formData.password);
       if (success) {
         toast.success('Login successful!');
-        router.push('/url/dashboard');
+        router.push('/dashboard');
       } else {
         toast.error('Invalid email or password');
       }
@@ -52,10 +52,10 @@ const LoginPage = () => {
           <div className='w-full max-w-md space-y-8'>
             <div className='text-center'>
               <h2 className='text-3xl font-bold tracking-tight text-gray-900 dark:text-white'>
-                Login to URL Shortener
+                Login to Dashboard
               </h2>
               <p className='mt-2 text-sm text-gray-600 dark:text-gray-400'>
-                Sign in to manage your short URLs
+                Access your URL shortener and projects management
               </p>
             </div>
 

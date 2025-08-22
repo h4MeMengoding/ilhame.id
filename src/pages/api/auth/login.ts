@@ -48,8 +48,9 @@ export default async function handler(
         userId: user.id,
         email: user.email,
         name: user.name,
+        role: user.role,
       },
-      process.env.NEXTAUTH_SECRET as string,
+      process.env.JWT_SECRET || (process.env.NEXTAUTH_SECRET as string),
       { expiresIn: '7d' },
     );
 

@@ -1,30 +1,43 @@
-import Breakline from '@/common/components/elements/Breakline';
-import { GITHUB_ACCOUNTS } from '@/common/constant/github';
+import { useEffect, useState } from 'react';
 
-import CodingActive from './CodingActive';
-import Contributions from './Contributions';
-import SpoLast from './SpotifyLastPlayed';
+import { useAuth } from '@/common/context/AuthContext';
+
+import AdminOnlyMessage from './AdminOnlyMessage';
+import DashboardLayout from './DashboardLayout';
+import ProjectsManager from './ProjectsManager';
+import UrlShortener from '../../urlshortener';
 
 const Dashboard = () => {
+  const [activeTab, setActiveTab] = useState<'urls' | 'projects'>('urls');
+  const { user } = useAuth();
+
+  // Redirect non-admin users away from projects tab
+  useEffect(() => {
+    if (activeTab === 'projects' && user?.role !== 'admin') {
+      setActiveTab('urls');
+    }
+  }, [activeTab, user?.role]);
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'urls':
+        return <UrlShortener />;
+      case 'projects':
+        // Double check: only render ProjectsManager for admin, show message for others
+        return user?.role === 'admin' ? (
+          <ProjectsManager />
+        ) : (
+          <AdminOnlyMessage />
+        );
+      default:
+        return <UrlShortener />;
+    }
+  };
+
   return (
-    <>
-      <CodingActive />
-      <Breakline className='mb-8 mt-10' />
-      <div className='space-y-10'>
-        {GITHUB_ACCOUNTS?.filter((account) => account?.is_active).map(
-          (account, index) => (
-            <Contributions
-              key={index}
-              username={account?.username}
-              type={account?.type}
-              endpoint={account?.endpoint}
-            />
-          ),
-        )}
-      </div>
-      <Breakline className='mb-8 mt-10' />
-      <SpoLast />
-    </>
+    <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      {renderContent()}
+    </DashboardLayout>
   );
 };
 

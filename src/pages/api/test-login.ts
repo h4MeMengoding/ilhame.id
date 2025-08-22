@@ -12,7 +12,7 @@ export default async function handler(
     });
   } else if (req.method === 'POST') {
     const loginData = {
-      email: 'admin@ilhame.id',
+      email: 'adm@ilhame.id',
       password: 'admin123',
     };
 

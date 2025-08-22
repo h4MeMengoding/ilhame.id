@@ -4,6 +4,7 @@ import { SWRConfig } from 'swr';
 
 import Container from '@/common/components/elements/Container';
 import PageHeading from '@/common/components/elements/PageHeading';
+import withAuth from '@/common/components/hoc/withAuth';
 import Dashboard from '@/modules/dashboard';
 import { getGithubUser } from '@/services/github';
 
@@ -14,7 +15,7 @@ interface DashboardPageProps {
 
 const PAGE_TITLE = 'Dashboard';
 const PAGE_DESCRIPTION =
-  'This is my personal dashboard, built with Next.js API routes deployed as serverless functions.';
+  'Manage your projects and URL shortener from one place.';
 const DashboardPage: NextPage<DashboardPageProps> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
@@ -27,7 +28,9 @@ const DashboardPage: NextPage<DashboardPageProps> = ({ fallback }) => {
   );
 };
 
-export default DashboardPage;
+export default withAuth(DashboardPage, {
+  redirectTo: '/login',
+});
 
 export const getStaticProps: GetStaticProps = async () => {
   // const readStats = await getReadStats();

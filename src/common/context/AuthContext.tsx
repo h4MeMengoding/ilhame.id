@@ -12,6 +12,7 @@ interface User {
   email: string;
   name?: string;
   avatar_url?: string;
+  role?: string;
 }
 
 interface AuthContextType {
@@ -58,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(null);
 
             // Always redirect to home if on protected routes, regardless of current location
-            const protectedRoutes = ['/url/dashboard', '/dashboard'];
+            const protectedRoutes = ['/dashboard'];
             const currentPath = window.location.pathname;
 
             if (
@@ -76,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(null);
 
           // Always redirect to home if on protected routes
-          const protectedRoutes = ['/url/dashboard', '/dashboard'];
+          const protectedRoutes = ['/dashboard'];
           const currentPath = window.location.pathname;
 
           if (protectedRoutes.some((route) => currentPath.startsWith(route))) {
@@ -101,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const token = localStorage.getItem('auth_token');
         if (!token) {
           setUser(null);
-          const protectedRoutes = ['/url/dashboard', '/dashboard'];
+          const protectedRoutes = ['/dashboard'];
           const currentPath = window.location.pathname;
 
           if (protectedRoutes.some((route) => currentPath.startsWith(route))) {

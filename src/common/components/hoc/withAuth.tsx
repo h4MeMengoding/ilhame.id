@@ -21,8 +21,8 @@ export function withAuth<T extends object>(
     useEffect(() => {
       if (!loading) {
         if (redirectIfAuthenticated && user) {
-          // Redirect authenticated users away from login/register pages
-          router.replace('/url/dashboard');
+          // Redirect authenticated users away from login/register pages to dashboard
+          router.replace('/dashboard');
         } else if (!redirectIfAuthenticated && !user) {
           // Redirect unauthenticated users away from protected pages
           router.replace(redirectTo);

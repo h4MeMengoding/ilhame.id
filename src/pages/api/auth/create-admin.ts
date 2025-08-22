@@ -15,25 +15,31 @@ export default async function handler(
   try {
     const hashedPassword = await bcrypt.hash('admin123', 12);
 
-    const user = await prisma.user.create({
-      data: {
-        email: 'admin@ilhame.id',
+    // Try to create new admin user or update existing one
+    const user = await prisma.user.upsert({
+      where: { email: 'adm@ilhame.id' },
+      update: {
         password: hashedPassword,
         name: 'Administrator',
+        role: 'admin',
+        is_active: true,
+      },
+      create: {
+        email: 'adm@ilhame.id',
+        password: hashedPassword,
+        name: 'Administrator',
+        role: 'admin',
+        is_active: true,
       },
     });
 
     const { password: _, ...userWithoutPassword } = user;
 
     res.status(201).json({
-      message: 'Admin user created successfully',
+      message: 'Admin user created/updated successfully',
       user: userWithoutPassword,
     });
   } catch (error: any) {
-    if (error.code === 'P2002') {
-      return res.status(400).json({ error: 'Admin user already exists' });
-    }
-
     console.error('Create admin error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }

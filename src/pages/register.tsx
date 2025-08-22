@@ -75,7 +75,7 @@ const RegisterPage = () => {
                 Create Account
               </h2>
               <p className='mt-2 text-sm text-gray-600 dark:text-gray-400'>
-                Sign up to start shortening URLs
+                Sign up to access URL shortener and projects management
               </p>
             </div>
 

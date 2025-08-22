@@ -37,6 +37,7 @@ model User {
   password    String
   name        String?
   avatar_url  String?
+  role        String   @default("user")
   created_at  DateTime @default(now())
   updated_at  DateTime @default(now())
   is_active   Boolean  @default(true)

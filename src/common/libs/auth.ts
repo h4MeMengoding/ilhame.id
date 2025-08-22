@@ -5,6 +5,7 @@ export interface AuthUser {
   userId: number;
   email: string;
   name?: string;
+  role?: string;
 }
 
 export interface AuthenticatedRequest extends NextApiRequest {
@@ -15,7 +16,7 @@ export function verifyToken(token: string): AuthUser | null {
   try {
     const decoded = jwt.verify(
       token,
-      process.env.NEXTAUTH_SECRET as string,
+      process.env.JWT_SECRET || (process.env.NEXTAUTH_SECRET as string),
     ) as AuthUser;
     return decoded;
   } catch (error) {
