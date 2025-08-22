@@ -64,7 +64,6 @@ const DashboardLayout = ({
             </div>
             <div className='min-w-0 flex-1'>
               <h3 className='text-base font-semibold text-neutral-900 dark:text-white sm:text-lg'>
-                <span className='block sm:inline'>Welcome back,</span>{' '}
                 <span className='block truncate sm:inline'>
                   {user?.name || user?.email?.split('@')[0]}
                 </span>

@@ -1,20 +1,29 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { FiCopy, FiExternalLink, FiEye, FiTrash2 } from 'react-icons/fi';
+import {
+  FiCopy,
+  FiExternalLink,
+  FiEye,
+  FiRefreshCw,
+  FiTrash2,
+} from 'react-icons/fi';
 import useSWR from 'swr';
 
 import Card from '@/common/components/elements/Card';
 import SectionHeading from '@/common/components/elements/SectionHeading';
 import SectionSubHeading from '@/common/components/elements/SectionSubHeading';
+import { useAuth } from '@/common/context/AuthContext';
 import { fetcher } from '@/services/fetcher';
 
 interface UrlItem {
   id: number;
   original_url: string;
-  short_code: string;
-  click_count: number;
+  slug: string;
+  clicks: number;
   created_at: string;
   updated_at: string;
+  title?: string;
+  description?: string;
 }
 
 interface UrlListProps {
@@ -23,21 +32,71 @@ interface UrlListProps {
 
 const UrlList = ({ refreshTrigger }: UrlListProps) => {
   const [copiedId, setCopiedId] = useState<number | null>(null);
+  const [cacheKey, setCacheKey] = useState(Date.now());
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { user } = useAuth();
 
-  const { data, isLoading, mutate } = useSWR('/api/shorturl', fetcher, {
-    revalidateOnFocus: false,
-    refreshInterval: 0,
-  });
+  const { data, isLoading, mutate } = useSWR(
+    user?.email
+      ? `/api/shorturl?user_email=${encodeURIComponent(user.email)}&t=${cacheKey}&refresh=${refreshTrigger}`
+      : null,
+    fetcher,
+    {
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      revalidateOnMount: true,
+      refreshInterval: 0,
+      dedupingInterval: 0,
+      revalidateIfStale: true,
+    },
+  );
 
-  // Refresh when trigger changes
+  // Refresh when trigger changes with aggressive cache invalidation
   useEffect(() => {
-    mutate();
-  }, [refreshTrigger, mutate]);
+    if (user?.email && refreshTrigger > 0) {
+      console.log('UrlList: Refresh triggered, count:', refreshTrigger);
+
+      // Update cache key to force fresh data
+      setCacheKey(Date.now());
+
+      // Force complete cache invalidation and fresh fetch
+      mutate(undefined, {
+        revalidate: true,
+        rollbackOnError: false,
+        populateCache: false,
+        optimisticData: undefined,
+      });
+    }
+  }, [refreshTrigger, mutate, user?.email]);
 
   const urls: UrlItem[] = data?.data || [];
 
-  const copyToClipboard = async (shortCode: string, id: number) => {
-    const shortUrl = `${window.location.origin}/s/${shortCode}`;
+  const handleManualRefresh = async () => {
+    if (!user?.email) return;
+
+    setIsRefreshing(true);
+    try {
+      // Update cache key to force fresh data
+      setCacheKey(Date.now());
+
+      // Force complete cache invalidation and fresh fetch
+      await mutate(undefined, {
+        revalidate: true,
+        rollbackOnError: false,
+        populateCache: false,
+        optimisticData: undefined,
+      });
+      toast.success('URLs refreshed successfully!');
+    } catch (error) {
+      console.error('Refresh error:', error);
+      toast.error('Failed to refresh URLs');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  const copyToClipboard = async (slug: string, id: number) => {
+    const shortUrl = `${window.location.origin}/s/${slug}`;
     try {
       await navigator.clipboard.writeText(shortUrl);
       setCopiedId(id);
@@ -63,15 +122,53 @@ const UrlList = ({ refreshTrigger }: UrlListProps) => {
       });
 
       if (response.ok) {
-        mutate();
+        // Update cache key to force fresh data
+        setCacheKey(Date.now());
+
+        // Optimistically remove the URL from the list
+        const updatedUrls = urls.filter((url) => url.id !== id);
+        mutate({ data: updatedUrls }, false);
+
+        // Then force complete revalidation from server
+        await mutate(undefined, {
+          revalidate: true,
+          rollbackOnError: false,
+          populateCache: false,
+        });
+
         toast.success('URL deleted successfully!');
       } else {
-        throw new Error('Failed to delete URL');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete URL');
       }
-    } catch (error) {
-      toast.error('Failed to delete URL');
+    } catch (error: any) {
+      console.error('Delete error:', error);
+      toast.error(error.message || 'Failed to delete URL');
+      // Force revalidation to ensure UI consistency
+      setCacheKey(Date.now());
+      mutate();
     }
   };
+
+  if (!user) {
+    return (
+      <div className='space-y-4 sm:space-y-6'>
+        <div>
+          <SectionHeading title='Your URLs' />
+          <SectionSubHeading>Manage your shortened URLs</SectionSubHeading>
+        </div>
+        <Card className='p-6 text-center sm:p-8'>
+          <FiExternalLink className='mx-auto h-10 w-10 text-neutral-400 sm:h-12 sm:w-12' />
+          <h3 className='mt-3 text-base font-medium text-neutral-900 dark:text-white sm:mt-4 sm:text-lg'>
+            Please log in
+          </h3>
+          <p className='mt-2 text-sm text-neutral-600 dark:text-neutral-400 sm:text-base'>
+            You need to be logged in to view your URLs.
+          </p>
+        </Card>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -89,9 +186,21 @@ const UrlList = ({ refreshTrigger }: UrlListProps) => {
 
   return (
     <div className='space-y-4 sm:space-y-6'>
-      <div>
-        <SectionHeading title='Your URLs' />
-        <SectionSubHeading>Manage your shortened URLs</SectionSubHeading>
+      <div className='flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0'>
+        <div>
+          <SectionHeading title='Your URLs' />
+          <SectionSubHeading>Manage your shortened URLs</SectionSubHeading>
+        </div>
+        <button
+          onClick={handleManualRefresh}
+          disabled={isRefreshing}
+          className='flex w-full items-center justify-center space-x-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-neutral-700 transition-colors hover:bg-neutral-50 disabled:opacity-50 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 sm:w-auto'
+        >
+          <FiRefreshCw
+            className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`}
+          />
+          <span className='hidden sm:inline'>Refresh</span>
+        </button>
       </div>
 
       {urls.length === 0 ? (
@@ -114,17 +223,28 @@ const UrlList = ({ refreshTrigger }: UrlListProps) => {
                   <div className='flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0'>
                     <div className='min-w-0 flex-1'>
                       <h3 className='text-sm font-medium text-neutral-900 dark:text-white sm:text-base'>
-                        Short URL
+                        {url.title || 'Short URL'}
                       </h3>
                       <p className='text-xs text-blue-600 dark:text-blue-400 sm:text-sm'>
-                        {window.location.origin}/s/{url.short_code}
+                        {window.location.origin}/s/{url.slug}
                       </p>
                     </div>
                     <div className='flex items-center space-x-2 text-xs text-neutral-500 dark:text-neutral-400 sm:text-sm'>
                       <FiEye className='h-3 w-3 sm:h-4 sm:w-4' />
-                      <span>{url.click_count} clicks</span>
+                      <span>{url.clicks} clicks</span>
                     </div>
                   </div>
+
+                  {url.description && (
+                    <div className='mt-2'>
+                      <h4 className='text-xs font-medium text-neutral-700 dark:text-neutral-300 sm:text-sm'>
+                        Description
+                      </h4>
+                      <p className='text-xs text-neutral-600 dark:text-neutral-400 sm:text-sm'>
+                        {url.description}
+                      </p>
+                    </div>
+                  )}
 
                   <div className='mt-2'>
                     <h4 className='text-xs font-medium text-neutral-700 dark:text-neutral-300 sm:text-sm'>
@@ -144,7 +264,7 @@ const UrlList = ({ refreshTrigger }: UrlListProps) => {
                 <div className='flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0'>
                   <div className='flex items-center space-x-2'>
                     <button
-                      onClick={() => copyToClipboard(url.short_code, url.id)}
+                      onClick={() => copyToClipboard(url.slug, url.id)}
                       className={`flex items-center space-x-1 rounded-lg px-3 py-2 text-xs transition-colors sm:text-sm ${
                         copiedId === url.id
                           ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
@@ -156,7 +276,7 @@ const UrlList = ({ refreshTrigger }: UrlListProps) => {
                     </button>
 
                     <a
-                      href={`/s/${url.short_code}`}
+                      href={`/s/${url.slug}`}
                       target='_blank'
                       rel='noopener noreferrer'
                       className='flex items-center space-x-1 rounded-lg bg-neutral-100 px-3 py-2 text-xs text-neutral-700 transition-colors hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 sm:text-sm'

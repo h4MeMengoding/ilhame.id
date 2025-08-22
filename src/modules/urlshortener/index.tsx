@@ -12,7 +12,15 @@ const UrlShortener = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleUrlCreated = () => {
-    setRefreshTrigger((prev) => prev + 1);
+    console.log(
+      'UrlShortener: handleUrlCreated called, current trigger:',
+      refreshTrigger,
+    );
+    setRefreshTrigger((prev) => {
+      const newValue = prev + 1;
+      console.log('UrlShortener: Setting refresh trigger to:', newValue);
+      return newValue;
+    });
   };
 
   return (
@@ -30,10 +38,6 @@ const UrlShortener = () => {
 
       {/* URL List Section */}
       <div className='space-y-4'>
-        <SectionHeading title='Your URLs' icon={<FiList size={22} />} />
-        <SectionSubHeading>
-          Manage and track your shortened URLs
-        </SectionSubHeading>
         <UrlList refreshTrigger={refreshTrigger} />
       </div>
     </div>
