@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiLink2, FiList } from 'react-icons/fi';
+import { FiLink2 } from 'react-icons/fi';
 
 import Breakline from '@/common/components/elements/Breakline';
 import SectionHeading from '@/common/components/elements/SectionHeading';
