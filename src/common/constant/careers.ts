@@ -2,6 +2,17 @@ import { CareerProps } from '../types/careers';
 
 export const CAREERS: CareerProps[] = [
   {
+    position: 'Media',
+    company: 'PKKMB UNNES 2025',
+    logo: '/images/careers/pkkmb25.jpg',
+    location: 'Universitas Negeri Semarang',
+    type: 'Full-time',
+    start_date: '2025-5-25',
+    end_date: null,
+    link: 'https://seeru.ae',
+    responsibilities: ['Create video content for PKKMB UNNES 2025.'],
+  },
+  {
     position: 'Student Staff',
     company: 'UNNES TV',
     logo: '/images/careers/unnestv.jpg',
@@ -13,7 +24,7 @@ export const CAREERS: CareerProps[] = [
     responsibilities: ['Create video content for the UNNES TV channel.'],
   },
   {
-    position: 'Freelance Porter',
+    position: 'Freelance Portir',
     company: 'Jateng Fair 2024',
     logo: '/images/careers/jtf.png',
     location: 'PT. PRPP Perseroda',
