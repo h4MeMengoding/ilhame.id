@@ -13,6 +13,7 @@ interface RedirectPageProps {
   title?: string;
   description?: string;
   slug: string;
+  countdownSeconds: number;
 }
 
 const RedirectPage = ({
@@ -20,12 +21,19 @@ const RedirectPage = ({
   title,
   description,
   slug,
+  countdownSeconds,
 }: RedirectPageProps) => {
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(countdownSeconds);
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
     if (!originalUrl) return;
+
+    // If countdown is 0, redirect immediately without showing landing page
+    if (countdownSeconds === 0) {
+      window.location.href = originalUrl;
+      return;
+    }
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
@@ -40,12 +48,24 @@ const RedirectPage = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [originalUrl]);
+  }, [originalUrl, countdownSeconds]);
 
   const handleRedirectNow = () => {
     setIsRedirecting(true);
     window.location.href = originalUrl;
   };
+
+  // If countdown is 0, this component shouldn't render (handled by server-side redirect)
+  // But just in case, redirect immediately
+  useEffect(() => {
+    if (countdownSeconds === 0) {
+      window.location.href = originalUrl;
+    }
+  }, [originalUrl, countdownSeconds]);
+
+  if (countdownSeconds === 0) {
+    return null;
+  }
 
   return (
     <>
@@ -151,6 +171,33 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       };
     }
 
+    // Get countdown setting from environment variable
+    const countdownSeconds = parseInt(
+      process.env.URL_REDIRECT_COUNTDOWN || '5',
+      10,
+    );
+
+    // If countdown is 0, redirect immediately on server side
+    if (countdownSeconds === 0) {
+      // Increment click count before redirecting
+      await prisma.shortUrl.update({
+        where: { slug },
+        data: {
+          clicks: {
+            increment: 1,
+          },
+          updated_at: new Date(),
+        },
+      });
+
+      return {
+        redirect: {
+          destination: shortUrl.original_url,
+          permanent: false,
+        },
+      };
+    }
+
     // Increment click count
     await prisma.shortUrl.update({
       where: { slug },
@@ -162,13 +209,14 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       },
     });
 
-    // Return URL data for confirmation page instead of redirecting
+    // Return URL data for confirmation page with countdown
     return {
       props: {
         originalUrl: shortUrl.original_url,
         title: shortUrl.title || null,
         description: shortUrl.description || null,
         slug: shortUrl.slug,
+        countdownSeconds,
       },
     };
   } catch (error) {
