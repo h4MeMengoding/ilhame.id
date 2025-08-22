@@ -28,10 +28,19 @@ async function handler(req: AuthenticatedRequest, res: NextApiResponse<Data>) {
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
 
+      const { home } = req.query;
+
+      // Different sorting for home page vs projects page
+      const orderBy =
+        home === 'true'
+          ? [{ updated_at: 'desc' as const }] // Home page: only sort by updated_at
+          : [
+              { is_featured: 'desc' as const }, // Projects page: featured first, then updated_at
+              { updated_at: 'desc' as const },
+            ];
+
       const response = await prisma.projects.findMany({
-        orderBy: {
-          updated_at: 'desc',
-        },
+        orderBy,
       });
       res.status(200).json({ status: true, data: response });
     } catch (error) {

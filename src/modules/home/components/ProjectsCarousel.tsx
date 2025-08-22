@@ -10,17 +10,18 @@ import { fetcher } from '@/services/fetcher';
 import ProjectCardHome from './ProjectCardHome';
 
 const ProjectsCarousel = () => {
-  const { data, isLoading } = useSWR(`/api/projects`, fetcher, {
+  const { data, isLoading } = useSWR(`/api/projects?home=true`, fetcher, {
     revalidateOnFocus: false,
     refreshInterval: 0,
   });
 
   const projectsData: ProjectItemProps[] = useMemo(() => {
-    return (
-      data?.data
-        ?.filter((project: ProjectItemProps) => project.is_show)
-        ?.slice(0, 4) || []
-    );
+    const filteredProjects =
+      data?.data?.filter((project: ProjectItemProps) => project.is_show) || [];
+
+    // For home page, projects are already sorted by updated_at desc from API
+    // Just take the first 4 projects
+    return filteredProjects.slice(0, 4);
   }, [data]);
 
   const ref =
