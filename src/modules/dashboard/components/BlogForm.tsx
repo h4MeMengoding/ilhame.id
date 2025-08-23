@@ -3,6 +3,7 @@ import { toast } from 'react-hot-toast';
 import { FiArrowLeft, FiSave, FiX } from 'react-icons/fi';
 
 import Card from '@/common/components/elements/Card';
+import RichTextEditor from '@/common/components/elements/RichTextEditor';
 import SectionHeading from '@/common/components/elements/SectionHeading';
 
 interface Blog {
@@ -269,21 +270,19 @@ const BlogForm = ({ blog, onSuccess, onCancel, mutate }: BlogFormProps) => {
 
           {/* Content */}
           <div>
-            <label className='block text-sm font-medium text-neutral-700 dark:text-neutral-300'>
-              Content (Markdown) *
+            <label className='mb-2 block text-sm font-medium text-neutral-700 dark:text-neutral-300'>
+              Content *
             </label>
-            <textarea
+            <RichTextEditor
               value={formData.content}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, content: e.target.value }))
+              onChange={(content) =>
+                setFormData((prev) => ({ ...prev, content }))
               }
-              rows={15}
-              className='mt-1 block w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 font-mono text-sm text-neutral-900 placeholder-neutral-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white dark:placeholder-neutral-400'
-              placeholder='Write your blog content in Markdown format...'
-              required
+              placeholder='Write your blog content here...'
+              className='mt-1'
             />
             <p className='mt-1 text-xs text-neutral-500 dark:text-neutral-400'>
-              You can use Markdown syntax for formatting.
+              Use the toolbar above to format your content.
             </p>
           </div>
 

@@ -1,6 +1,7 @@
 import useSWR from 'swr';
 
 import Breakline from '@/common/components/elements/Breakline';
+import HTMLContent from '@/common/components/elements/HTMLContent';
 import MDXComponent from '@/common/components/elements/MDXComponent';
 import { calculateReadingTime } from '@/common/helpers';
 import { BlogDetailProps } from '@/common/types/blog';
@@ -71,7 +72,16 @@ const BlogDetail = ({
 
       <div className='space-y-6 leading-[1.8] dark:text-neutral-300 '>
         {content?.rendered && (
-          <MDXComponent>{content?.markdown || content?.rendered}</MDXComponent>
+          <>
+            {/* Check if content is HTML (contains HTML tags) or markdown */}
+            {content.rendered.includes('<') ? (
+              <HTMLContent>{content.rendered}</HTMLContent>
+            ) : (
+              <MDXComponent>
+                {content?.markdown || content?.rendered}
+              </MDXComponent>
+            )}
+          </>
         )}
       </div>
       {tagList?.length >= 1 && (
