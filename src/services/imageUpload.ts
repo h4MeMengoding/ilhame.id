@@ -245,3 +245,27 @@ export const getPathFromUrl = (url: string): string | null => {
     return null;
   }
 };
+
+// Delete project image by URL
+export const deleteProjectImageByUrl = async (
+  imageUrl: string,
+): Promise<boolean> => {
+  try {
+    const path = getPathFromUrl(imageUrl);
+    if (!path) {
+      return false;
+    }
+
+    const { error } = await supabase.storage
+      .from(PROJECTS_BUCKET)
+      .remove([path]);
+
+    if (error) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+};

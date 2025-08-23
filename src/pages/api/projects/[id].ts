@@ -120,9 +120,28 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
     }
   } else if (req.method === 'DELETE') {
     try {
+      // First, get the project to retrieve the image URL
+      const project = await prisma.projects.findUnique({
+        where: { id: projectId },
+        select: { image: true },
+      });
+
+      // Delete the project from database
       await prisma.projects.delete({
         where: { id: projectId },
       });
+
+      // If project had an image, delete it from storage
+      if (project?.image) {
+        try {
+          const { deleteProjectImageByUrl } = await import(
+            '@/services/imageUpload'
+          );
+          await deleteProjectImageByUrl(project.image);
+        } catch (error) {
+          // Silently handle storage deletion errors
+        }
+      }
 
       res
         .status(200)
