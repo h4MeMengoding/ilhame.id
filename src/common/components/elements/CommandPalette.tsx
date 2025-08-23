@@ -293,7 +293,7 @@ const CommandPalette = () => {
                               <>
                                 {isActiveRoute(child?.href) ? (
                                   <span className='animate-pulse  text-xs text-neutral-500'>
-                                    Kamu disini
+                                    Now
                                   </span>
                                 ) : (
                                   <>

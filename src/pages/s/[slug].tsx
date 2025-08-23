@@ -6,6 +6,7 @@ import { FiClock, FiExternalLink } from 'react-icons/fi';
 
 import Card from '@/common/components/elements/Card';
 import Container from '@/common/components/elements/Container';
+import { extractOGTags, type OGData } from '@/common/helpers/ogExtractor';
 import prisma from '@/common/libs/prisma';
 
 interface RedirectPageProps {
@@ -14,6 +15,8 @@ interface RedirectPageProps {
   description?: string;
   slug: string;
   countdownSeconds: number;
+  ogData: OGData;
+  isBotRequest?: boolean;
 }
 
 const RedirectPage = ({
@@ -22,6 +25,8 @@ const RedirectPage = ({
   description,
   slug,
   countdownSeconds,
+  ogData,
+  isBotRequest = false,
 }: RedirectPageProps) => {
   const [countdown, setCountdown] = useState(countdownSeconds);
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -29,8 +34,8 @@ const RedirectPage = ({
   useEffect(() => {
     if (!originalUrl) return;
 
-    // If countdown is 0, redirect immediately without showing landing page
-    if (countdownSeconds === 0) {
+    // If this is a bot request or countdown is 0, redirect immediately
+    if (isBotRequest || countdownSeconds === 0) {
       window.location.href = originalUrl;
       return;
     }
@@ -48,20 +53,66 @@ const RedirectPage = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [originalUrl, countdownSeconds]);
+  }, [originalUrl, countdownSeconds, isBotRequest]);
 
   const handleRedirectNow = () => {
     setIsRedirecting(true);
     window.location.href = originalUrl;
   };
 
-  // If countdown is 0, this component shouldn't render (handled by server-side redirect)
+  // If countdown is 0 or it's a bot request, this component shouldn't render (handled by server-side redirect)
   // But just in case, redirect immediately
   useEffect(() => {
-    if (countdownSeconds === 0) {
+    if (countdownSeconds === 0 || isBotRequest) {
       window.location.href = originalUrl;
     }
-  }, [originalUrl, countdownSeconds]);
+  }, [originalUrl, countdownSeconds, isBotRequest]);
+
+  // For bot requests, show minimal content but still include OG tags
+  if (isBotRequest) {
+    return (
+      <>
+        <NextSeo
+          title={ogData.title || 'Redirecting...'}
+          description={
+            ogData.description ||
+            'You will be redirected to the original content'
+          }
+          openGraph={{
+            title: ogData.title || undefined,
+            description: ogData.description || undefined,
+            url: ogData.url || originalUrl,
+            siteName: ogData.siteName || undefined,
+            images: ogData.image
+              ? [
+                  {
+                    url: ogData.image,
+                    width: 1200,
+                    height: 630,
+                    alt: ogData.title || 'Preview Image',
+                  },
+                ]
+              : [],
+            type: ogData.type || 'website',
+          }}
+          twitter={{
+            cardType: 'summary_large_image',
+            site: '@ilhamshofaaa',
+          }}
+        />
+        <div style={{ display: 'none' }}>
+          <h1>{ogData.title}</h1>
+          <p>{ogData.description}</p>
+          {ogData.image && <img src={ogData.image} alt='Preview' />}
+        </div>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.location.href = "${originalUrl}";`,
+          }}
+        />
+      </>
+    );
+  }
 
   if (countdownSeconds === 0) {
     return null;
@@ -70,8 +121,31 @@ const RedirectPage = ({
   return (
     <>
       <NextSeo
-        title={`Redirecting to ${title || 'Link'} - Ilham Shofa`}
-        description={description || `You will be redirected to ${originalUrl}`}
+        title={ogData.title || 'Redirecting...'}
+        description={
+          ogData.description || 'You will be redirected to the original content'
+        }
+        openGraph={{
+          title: ogData.title || undefined,
+          description: ogData.description || undefined,
+          url: ogData.url || originalUrl,
+          siteName: ogData.siteName || undefined,
+          images: ogData.image
+            ? [
+                {
+                  url: ogData.image,
+                  width: 1200,
+                  height: 630,
+                  alt: ogData.title || 'Preview Image',
+                },
+              ]
+            : [],
+          type: ogData.type || 'website',
+        }}
+        twitter={{
+          cardType: 'summary_large_image',
+          site: '@ilhamshofaaa',
+        }}
       />
       <div className='flex min-h-screen items-center justify-center'>
         <Container>
@@ -81,11 +155,11 @@ const RedirectPage = ({
                 <FiExternalLink size={48} className='mx-auto' />
               </div>
               <h1 className='mb-2 text-2xl font-bold text-neutral-800 dark:text-neutral-200'>
-                {title || 'Redirecting to External Link'}
+                {ogData.title || title || 'Redirecting to External Link'}
               </h1>
-              {description && (
+              {(ogData.description || description) && (
                 <p className='mb-4 text-neutral-600 dark:text-neutral-400'>
-                  {description}
+                  {ogData.description || description}
                 </p>
               )}
             </div>
@@ -144,7 +218,11 @@ const RedirectPage = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  req,
+  res,
+}) => {
   const slug = params?.slug as string;
 
   if (!slug) {
@@ -176,6 +254,57 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       process.env.URL_REDIRECT_COUNTDOWN || '5',
       10,
     );
+
+    // Extract OG data from the original URL
+    let ogData: OGData;
+    try {
+      ogData = await extractOGTags(shortUrl.original_url);
+      // Don't use default data, only use what we actually extracted
+    } catch (error) {
+      console.error('Error extracting OG data:', error);
+      ogData = {
+        title: null,
+        description: null,
+        image: null,
+        siteName: null,
+        type: null,
+        url: null,
+      };
+    }
+
+    // Check if this is a bot/crawler request
+    const userAgent = req.headers['user-agent'] || '';
+    const isBotRequest =
+      /bot|crawler|spider|crawling|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegram|discord|slack/i.test(
+        userAgent,
+      );
+
+    // If it's a bot request, return a special page with OG tags but auto-redirect
+    if (isBotRequest) {
+      // Still increment click count for bots
+      await prisma.shortUrl.update({
+        where: { slug },
+        data: {
+          clicks: {
+            increment: 1,
+          },
+          updated_at: new Date(),
+        },
+      });
+
+      // Return special props for bot rendering
+      return {
+        props: {
+          originalUrl: shortUrl.original_url,
+          title: shortUrl.title || null,
+          description: shortUrl.description || null,
+          slug: shortUrl.slug,
+          countdownSeconds: 0, // Auto redirect for bots
+          ogData,
+          isBotRequest: true,
+        },
+      };
+    }
 
     // If countdown is 0, redirect immediately on server side
     if (countdownSeconds === 0) {
@@ -217,6 +346,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         description: shortUrl.description || null,
         slug: shortUrl.slug,
         countdownSeconds,
+        ogData,
+        isBotRequest: false,
       },
     };
   } catch (error) {
