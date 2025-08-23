@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { FiImage, FiLink, FiUpload, FiX } from 'react-icons/fi';
 
 import { useImageUpload } from '@/common/hooks/useImageUpload';
+import { deleteProjectImage, getPathFromUrl } from '@/services/imageUpload';
 
 interface ImageUploadProps {
   value: string;
@@ -31,7 +32,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   });
 
   const handleFileSelect = async (file: File) => {
-    await uploadImage(file, projectSlug);
+    await uploadImage(file, projectSlug, true); // Upload to temp folder
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +67,18 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     fileInputRef.current?.click();
   };
 
-  const clearImage = () => {
+  const clearImage = async () => {
+    // If it's a temporary upload, clean it up directly from URL
+    if (value && value.includes('/temp/')) {
+      try {
+        const tempPath = getPathFromUrl(value);
+        if (tempPath) {
+          await deleteProjectImage(tempPath);
+        }
+      } catch (error) {
+        console.error('Failed to cleanup temp image:', error);
+      }
+    }
     onChange('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';

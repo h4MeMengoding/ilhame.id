@@ -6,6 +6,7 @@ import {
   FiExternalLink,
   FiInfo,
   FiRefreshCw,
+  FiTrash2,
   FiX,
 } from 'react-icons/fi';
 
@@ -19,6 +20,7 @@ const StorageStatus: React.FC<StorageStatusProps> = ({ onSetupComplete }) => {
   const [setupError, setSetupError] = useState<string | null>(null);
   const [requiresManualSetup, setRequiresManualSetup] = useState(false);
   const [manualInstructions, setManualInstructions] = useState<string[]>([]);
+  const [isCleaningUp, setIsCleaningUp] = useState(false);
 
   const checkStorageSetup = async () => {
     setIsChecking(true);
@@ -54,6 +56,32 @@ const StorageStatus: React.FC<StorageStatusProps> = ({ onSetupComplete }) => {
       toast.error(errorMessage);
     } finally {
       setIsChecking(false);
+    }
+  };
+
+  const cleanupTempImages = async (force = false) => {
+    setIsCleaningUp(true);
+    try {
+      const response = await fetch('/api/storage/cleanup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ force }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message || 'Failed to cleanup temporary images');
+      }
+    } catch (error: any) {
+      console.error('Cleanup error:', error);
+      toast.error('Failed to cleanup temporary images');
+    } finally {
+      setIsCleaningUp(false);
     }
   };
 
@@ -94,6 +122,20 @@ const StorageStatus: React.FC<StorageStatusProps> = ({ onSetupComplete }) => {
                 {requiresManualSetup ? 'Manual Setup Required' : 'Error'}
               </span>
             </div>
+          )}
+
+          {isSetupComplete && (
+            <button
+              onClick={() => cleanupTempImages(true)}
+              disabled={isCleaningUp}
+              className='flex items-center space-x-1 text-sm text-red-600 hover:text-red-700 disabled:opacity-50'
+              title='Force cleanup ALL temporary images'
+            >
+              <FiTrash2
+                className={`h-3 w-3 ${isCleaningUp ? 'animate-spin' : ''}`}
+              />
+              <span>{isCleaningUp ? 'Cleaning...' : 'Force Cleanup'}</span>
+            </button>
           )}
 
           <button

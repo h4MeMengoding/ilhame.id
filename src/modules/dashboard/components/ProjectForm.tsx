@@ -5,12 +5,16 @@ import { FiArrowLeft, FiSave, FiX } from 'react-icons/fi';
 import Card from '@/common/components/elements/Card';
 import ImageUpload from '@/common/components/elements/ImageUpload';
 import ImageUploadErrorBoundary from '@/common/components/elements/ImageUploadErrorBoundary';
+import ImageUploadInfo from '@/common/components/elements/ImageUploadInfo';
 import ManualSequenceFix from '@/common/components/elements/ManualSequenceFix';
 import SectionHeading from '@/common/components/elements/SectionHeading';
 import SequenceFixer from '@/common/components/elements/SequenceFixer';
 import StorageStatus from '@/common/components/elements/StorageStatus';
+import TempImageWarning from '@/common/components/elements/TempImageWarning';
 import { STACKS } from '@/common/constant/stacks';
+import { useImageUpload } from '@/common/hooks/useImageUpload';
 import { ProjectItemProps } from '@/common/types/projects';
+import { deleteProjectImage, getPathFromUrl } from '@/services/imageUpload';
 
 interface ProjectFormProps {
   project?: ProjectItemProps | null;
@@ -37,6 +41,8 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
   const [selectedStacks, setSelectedStacks] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showSequenceFixer, setShowSequenceFixer] = useState(false);
+
+  const { moveToPermament } = useImageUpload();
 
   // Initialize selectedStacks properly when project changes
   useEffect(() => {
@@ -138,11 +144,27 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
     setIsLoading(true);
 
     try {
+      let finalImageUrl = formData.image;
+
+      // If image is in temp folder, move it to permanent location
+      if (formData.image.includes('/temp/')) {
+        console.log('Moving temp image to permanent:', formData.image);
+        const result = await moveToPermament(formData.image);
+        if (result) {
+          finalImageUrl = result.url;
+          console.log('Moved to permanent:', finalImageUrl);
+        } else {
+          throw new Error(
+            'Failed to move temporary image to permanent location',
+          );
+        }
+      }
+
       const payload = {
         title: formData.title.trim(),
         slug: formData.slug.trim(),
         description: formData.description.trim(),
-        image: formData.image.trim(),
+        image: finalImageUrl,
         link_demo: formData.link_demo?.trim() || null,
         link_github: formData.link_github?.trim() || null,
         content: formData.content?.trim() || null,
@@ -166,7 +188,10 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
       });
 
       if (response.ok) {
-        const responseData = await response.json();
+        console.log(
+          'Project saved successfully, final image URL:',
+          finalImageUrl,
+        );
         toast.success(
           project
             ? 'Project updated successfully!'
@@ -174,6 +199,16 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
         );
         onSuccess();
       } else {
+        // If saving failed and we moved an image, we should rollback
+        if (
+          formData.image.includes('/temp/') &&
+          finalImageUrl !== formData.image
+        ) {
+          // Rollback: we might want to move back to temp or clean up
+          // For now, we'll just log this case
+          console.warn('Project save failed after moving image from temp');
+        }
+
         const errorData = await response.json();
 
         // Check if error is related to ID constraint
@@ -194,10 +229,38 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
       }
     } catch (error: any) {
       console.error('Save project error:', error);
+
+      // If there was a temp image and save failed, clean it up directly
+      if (formData.image.includes('/temp/')) {
+        try {
+          const tempPath = getPathFromUrl(formData.image);
+          if (tempPath) {
+            await deleteProjectImage(tempPath);
+          }
+        } catch (cleanupError) {
+          console.error('Failed to cleanup temp image:', cleanupError);
+        }
+      }
+
       toast.error(error.message || 'Failed to save project');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCancel = async () => {
+    // Clean up temp image if exists - use direct cleanup from URL
+    if (formData.image && formData.image.includes('/temp/')) {
+      try {
+        const tempPath = getPathFromUrl(formData.image);
+        if (tempPath) {
+          await deleteProjectImage(tempPath);
+        }
+      } catch (error) {
+        console.error('Failed to cleanup temp image on cancel:', error);
+      }
+    }
+    onCancel();
   };
 
   return (
@@ -205,7 +268,7 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
       <div className='flex items-center justify-between'>
         <div className='flex items-center space-x-4'>
           <button
-            onClick={onCancel}
+            onClick={handleCancel}
             className='flex items-center space-x-2 text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white'
           >
             <FiArrowLeft className='h-4 w-4' />
@@ -219,6 +282,12 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
 
       {/* Storage Status Info */}
       <StorageStatus />
+
+      {/* Image Upload Info */}
+      <ImageUploadInfo />
+
+      {/* Temp Image Warning */}
+      <TempImageWarning />
 
       {/* Sequence Fixer (only show when needed) */}
       {showSequenceFixer && (
@@ -422,7 +491,7 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
           <div className='flex justify-end space-x-4 pt-6'>
             <button
               type='button'
-              onClick={onCancel}
+              onClick={handleCancel}
               className='flex items-center space-x-2 rounded-lg border border-neutral-300 px-4 py-2 text-neutral-700 transition-colors hover:bg-neutral-50 dark:border-neutral-600 dark:text-neutral-300 dark:hover:bg-neutral-800'
             >
               <FiX className='h-4 w-4' />

@@ -8,7 +8,7 @@ const siteName = 'Ilham Shofa Portfolio';
 
 const defaultSEOConfig = {
   defaultTitle: `${author} - Beginner Developer & Videography`,
-  titleTemplate: '%s | Ilham Shofa',
+  titleTemplate: '%s Personal Web',
   description: metaDescription,
   canonical: canonicalUrl,
   additionalMetaTags: [
