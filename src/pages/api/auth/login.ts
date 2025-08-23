@@ -57,8 +57,6 @@ export default async function handler(
     // Remove password from response
     const { password: _, ...userWithoutPassword } = user;
 
-    console.log('Token set in cookie');
-
     res.status(200).json({
       message: 'Login successful',
       token,

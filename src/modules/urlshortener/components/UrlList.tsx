@@ -54,8 +54,6 @@ const UrlList = ({ refreshTrigger }: UrlListProps) => {
   // Refresh when trigger changes with aggressive cache invalidation
   useEffect(() => {
     if (user?.email && refreshTrigger > 0) {
-      console.log('UrlList: Refresh triggered, count:', refreshTrigger);
-
       // Update cache key to force fresh data
       setCacheKey(Date.now());
 

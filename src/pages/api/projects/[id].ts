@@ -94,7 +94,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
 
       res.status(200).json({ status: true, data: updatedProject });
     } catch (error) {
-      res.status(500).json({ status: false, error: error });
+      console.error('Error updating project:', error);
+      res.status(500).json({
+        status: false,
+        message:
+          error instanceof Error ? error.message : 'Internal server error',
+        error: process.env.NODE_ENV === 'development' ? error : undefined,
+      });
     }
   } else if (req.method === 'PATCH') {
     try {

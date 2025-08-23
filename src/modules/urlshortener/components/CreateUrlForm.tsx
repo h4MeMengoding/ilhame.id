@@ -54,7 +54,6 @@ const CreateUrlForm = ({ onSuccess }: CreateUrlFormProps) => {
       toast.success('Short URL created successfully!');
 
       // Call onSuccess to trigger refresh
-      console.log('CreateUrlForm: URL created, calling onSuccess');
       onSuccess();
 
       // Optional: Clear result after some time to clean up UI

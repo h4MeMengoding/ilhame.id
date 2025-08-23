@@ -12,13 +12,8 @@ const UrlShortener = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleUrlCreated = () => {
-    console.log(
-      'UrlShortener: handleUrlCreated called, current trigger:',
-      refreshTrigger,
-    );
     setRefreshTrigger((prev) => {
       const newValue = prev + 1;
-      console.log('UrlShortener: Setting refresh trigger to:', newValue);
       return newValue;
     });
   };

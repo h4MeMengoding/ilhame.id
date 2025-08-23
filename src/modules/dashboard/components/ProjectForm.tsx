@@ -3,7 +3,12 @@ import { toast } from 'react-hot-toast';
 import { FiArrowLeft, FiSave, FiX } from 'react-icons/fi';
 
 import Card from '@/common/components/elements/Card';
+import ImageUpload from '@/common/components/elements/ImageUpload';
+import ImageUploadErrorBoundary from '@/common/components/elements/ImageUploadErrorBoundary';
+import ManualSequenceFix from '@/common/components/elements/ManualSequenceFix';
 import SectionHeading from '@/common/components/elements/SectionHeading';
+import SequenceFixer from '@/common/components/elements/SequenceFixer';
+import StorageStatus from '@/common/components/elements/StorageStatus';
 import { STACKS } from '@/common/constant/stacks';
 import { ProjectItemProps } from '@/common/types/projects';
 
@@ -31,6 +36,7 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
   });
   const [selectedStacks, setSelectedStacks] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showSequenceFixer, setShowSequenceFixer] = useState(false);
 
   // Initialize selectedStacks properly when project changes
   useEffect(() => {
@@ -113,11 +119,35 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
       return;
     }
 
+    // Validate required fields
+    if (!formData.title.trim()) {
+      toast.error('Title is required');
+      return;
+    }
+
+    if (!formData.slug.trim()) {
+      toast.error('Slug is required');
+      return;
+    }
+
+    if (!formData.image.trim()) {
+      toast.error('Image is required');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       const payload = {
-        ...formData,
+        title: formData.title.trim(),
+        slug: formData.slug.trim(),
+        description: formData.description.trim(),
+        image: formData.image.trim(),
+        link_demo: formData.link_demo?.trim() || null,
+        link_github: formData.link_github?.trim() || null,
+        content: formData.content?.trim() || null,
+        is_show: formData.is_show,
+        is_featured: formData.is_featured,
         stacks: JSON.stringify(selectedStacks),
         updated_at: new Date(formData.updated_at).toISOString(),
       };
@@ -136,6 +166,7 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
       });
 
       if (response.ok) {
+        const responseData = await response.json();
         toast.success(
           project
             ? 'Project updated successfully!'
@@ -144,9 +175,25 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
         onSuccess();
       } else {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to save project');
+
+        // Check if error is related to ID constraint
+        if (
+          errorData.message?.includes(
+            'Unique constraint failed on the fields: (`id`)',
+          )
+        ) {
+          setShowSequenceFixer(true);
+          throw new Error(
+            'Database ID sequence error - use the fix button below',
+          );
+        }
+
+        throw new Error(
+          errorData.message || `Server error: ${response.status}`,
+        );
       }
     } catch (error: any) {
+      console.error('Save project error:', error);
       toast.error(error.message || 'Failed to save project');
     } finally {
       setIsLoading(false);
@@ -169,6 +216,22 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
           />
         </div>
       </div>
+
+      {/* Storage Status Info */}
+      <StorageStatus />
+
+      {/* Sequence Fixer (only show when needed) */}
+      {showSequenceFixer && (
+        <div className='space-y-4'>
+          <SequenceFixer
+            onFixComplete={() => {
+              setShowSequenceFixer(false);
+              toast.success('You can now try saving the project again');
+            }}
+          />
+          <ManualSequenceFix />
+        </div>
+      )}
 
       <Card className='p-6'>
         <form onSubmit={handleSubmit} className='space-y-6'>
@@ -219,18 +282,17 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
           </div>
 
           <div>
-            <label className='block text-sm font-medium text-neutral-700 dark:text-neutral-300'>
-              Image URL *
-            </label>
-            <input
-              type='url'
-              name='image'
-              value={formData.image}
-              onChange={handleInputChange}
-              required
-              className='mt-1 block w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white dark:placeholder-neutral-400'
-              placeholder='https://example.com/image.jpg'
-            />
+            <ImageUploadErrorBoundary>
+              <ImageUpload
+                value={formData.image}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, image: value }))
+                }
+                projectSlug={formData.slug}
+                label='Image'
+                required
+              />
+            </ImageUploadErrorBoundary>
           </div>
 
           <div className='grid gap-6 md:grid-cols-2'>

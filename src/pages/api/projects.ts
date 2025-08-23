@@ -62,6 +62,14 @@ async function handler(req: AuthenticatedRequest, res: NextApiResponse<Data>) {
         updated_at,
       } = req.body;
 
+      // Validate required fields
+      if (!title || !slug || !image) {
+        return res.status(400).json({
+          status: false,
+          message: 'Title, slug, and image are required',
+        });
+      }
+
       // Check if slug is unique
       const existingProject = await prisma.projects.findUnique({
         where: { slug },
@@ -74,25 +82,34 @@ async function handler(req: AuthenticatedRequest, res: NextApiResponse<Data>) {
         });
       }
 
+      // Create project data object without ID (let auto-increment handle it)
+      const createData = {
+        title: title.trim(),
+        slug: slug.trim(),
+        description: description?.trim() || '',
+        image: image.trim(),
+        link_demo: link_demo?.trim() || null,
+        link_github: link_github?.trim() || null,
+        stacks: stacks || '[]',
+        content: content?.trim() || null,
+        is_show: is_show ?? true,
+        is_featured: is_featured ?? false,
+        updated_at: updated_at ? new Date(updated_at) : new Date(),
+      };
+
       const newProject = await prisma.projects.create({
-        data: {
-          title,
-          slug,
-          description,
-          image,
-          link_demo,
-          link_github,
-          stacks,
-          content,
-          is_show: is_show ?? true,
-          is_featured: is_featured ?? false,
-          updated_at: updated_at ? new Date(updated_at) : new Date(),
-        },
+        data: createData,
       });
 
       res.status(201).json({ status: true, data: newProject });
     } catch (error) {
-      res.status(500).json({ status: false, error: error });
+      console.error('Error creating project:', error);
+      res.status(500).json({
+        status: false,
+        message:
+          error instanceof Error ? error.message : 'Internal server error',
+        error: process.env.NODE_ENV === 'development' ? error : undefined,
+      });
     }
   } else {
     res.setHeader('Allow', ['GET', 'POST']);
