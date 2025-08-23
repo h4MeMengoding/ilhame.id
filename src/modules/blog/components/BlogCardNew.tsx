@@ -123,13 +123,13 @@ const BlogCardNew = ({
                 <div className='flex items-center gap-1'>
                   <ViewIcon size={14} />
                   <span className='ml-0.5 text-xs font-medium'>
-                    {total_views_count.toLocaleString()} DILIHAT
+                    {total_views_count.toLocaleString()} VIEW
                   </span>
                 </div>
                 <div className='flex items-center gap-1'>
                   <ClockIcon size={14} />
                   <span className='ml-0.5 text-xs font-medium'>
-                    {readingTimeMinutes.toLocaleString()} MENIT MEMBACA
+                    {readingTimeMinutes.toLocaleString()} MIN READ
                   </span>
                 </div>
               </motion.div>

@@ -9,7 +9,6 @@ import Container from '@/common/components/elements/Container';
 import { formatExcerpt } from '@/common/helpers';
 import { BlogDetailProps } from '@/common/types/blog';
 import BlogDetail from '@/modules/blog/components/BlogDetail';
-import { getBlogDetail } from '@/services/blog';
 
 const GiscusComment = dynamic(
   () => import('@/modules/blog/components/GiscusComment'),
@@ -29,7 +28,7 @@ const BlogDetailPage: NextPage<BlogDetailPageProps> = ({ blog }) => {
   const description = formatExcerpt(blogData?.excerpt?.rendered);
 
   const incrementViews = async () => {
-    await axios.post(`/api/views?&slug=${blogData?.slug}`);
+    await axios.post(`/api/views?slug=${blogData?.slug}`);
   };
 
   useEffect(() => {
@@ -86,9 +85,30 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const response = await getBlogDetail(parseInt(blogId));
+  try {
+    // Fetch blog detail from internal API
+    const response = await fetch(
+      `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/blog/${blogId}`,
+    );
 
-  if (response?.status === 404) {
+    if (!response.ok) {
+      return {
+        redirect: {
+          destination: '/404',
+          permanent: false,
+        },
+      };
+    }
+
+    const blogData = await response.json();
+
+    return {
+      props: {
+        blog: blogData,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching blog detail:', error);
     return {
       redirect: {
         destination: '/404',
@@ -96,10 +116,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-
-  return {
-    props: {
-      blog: response,
-    },
-  };
 };

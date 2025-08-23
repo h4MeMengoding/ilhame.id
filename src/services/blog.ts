@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios, { AxiosError, AxiosResponse } from 'axios';
-
-import { BlogItemProps } from '@/common/types/blog';
+import axios, { AxiosError } from 'axios';
 
 type BlogParamsProps = {
   page?: number;
   per_page?: number;
-  categories?: number | undefined;
   search?: string;
 };
 
@@ -14,8 +11,6 @@ interface BlogDetailResponseProps {
   status: number;
   data: any;
 }
-
-const BLOG_URL = process.env.BLOG_API_URL as string;
 
 const handleAxiosError = (
   error: AxiosError<any>,
@@ -27,37 +22,15 @@ const handleAxiosError = (
   }
 };
 
-const extractData = (
-  response: AxiosResponse,
-): {
-  posts: BlogItemProps[];
-  page: number;
-  per_page: number;
-  total_pages: number;
-  total_posts: number;
-  categories: number;
-} => {
-  const { headers, data } = response;
-  return {
-    posts: data,
-    page: response?.config?.params?.page || 1,
-    per_page: response?.config?.params?.per_page || 6,
-    total_pages: Number(headers['x-wp-totalpages']) || 0,
-    total_posts: Number(headers['x-wp-total']) || 0,
-    categories: response?.config?.params?.categories,
-  };
-};
-
 export const getBlogList = async ({
   page = 1,
   per_page = 6,
-  categories,
   search,
 }: BlogParamsProps): Promise<{ status: number; data: any }> => {
   try {
-    const params = { page, per_page, categories, search };
-    const response = await axios.get(`${BLOG_URL}posts`, { params });
-    return { status: response?.status, data: extractData(response) };
+    const params = { page, per_page, search };
+    const response = await axios.get(`/api/blog`, { params });
+    return { status: response?.status, data: response?.data };
   } catch (error) {
     return handleAxiosError(error as AxiosError<any>);
   }
@@ -67,7 +40,7 @@ export const getBlogDetail = async (
   id: number,
 ): Promise<BlogDetailResponseProps> => {
   try {
-    const response = await axios.get(`${BLOG_URL}posts/${id}`);
+    const response = await axios.get(`/api/blog/${id}`);
     return { status: response?.status, data: response?.data };
   } catch (error) {
     return handleAxiosError(error as AxiosError<any>);

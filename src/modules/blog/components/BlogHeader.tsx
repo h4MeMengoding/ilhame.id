@@ -77,7 +77,7 @@ const BlogHeader = ({
             <ViewIcon size={16} />
             <div className='ml-0.5 flex gap-1'>
               <span>{page_views_count?.toLocaleString() || '-'}</span>
-              <span>Dilihat</span>
+              <span>View</span>
             </div>
           </div>
           <div className='flex items-center gap-1 font-medium'>

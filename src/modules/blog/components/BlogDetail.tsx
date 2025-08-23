@@ -15,6 +15,7 @@ const BlogDetail = ({
   slug,
   content,
   tags_list,
+  featured_image_url,
 }: BlogDetailProps) => {
   const { data: viewsData } = useSWR(
     `/api/views?slug=${slug}&id=${id}`,
@@ -35,8 +36,43 @@ const BlogDetail = ({
         published_at={date}
         page_views_count={viewsCount}
       />
+
+      {/* Featured Image */}
+      {featured_image_url &&
+        featured_image_url !== '/images/placeholder.png' && (
+          <div className='my-8'>
+            <div className='relative aspect-video w-full overflow-hidden rounded-lg bg-neutral-100 dark:bg-neutral-800'>
+              <img
+                src={featured_image_url}
+                alt={title?.rendered || 'Blog featured image'}
+                className='h-full w-full object-cover transition-opacity duration-300'
+                loading='lazy'
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  target.style.display = 'none';
+                  const parent = target.parentElement;
+                  if (parent) {
+                    parent.innerHTML = `
+                    <div class="flex h-full w-full items-center justify-center text-neutral-500 dark:text-neutral-400">
+                      <span class="text-sm">Failed to load image</span>
+                    </div>
+                  `;
+                  }
+                }}
+              />
+            </div>
+            {title?.rendered && (
+              <p className='mt-2 text-center text-sm text-neutral-600 dark:text-neutral-400'>
+                {title.rendered}
+              </p>
+            )}
+          </div>
+        )}
+
       <div className='space-y-6 leading-[1.8] dark:text-neutral-300 '>
-        {content?.rendered && <MDXComponent>{content?.markdown}</MDXComponent>}
+        {content?.rendered && (
+          <MDXComponent>{content?.markdown || content?.rendered}</MDXComponent>
+        )}
       </div>
       {tagList?.length >= 1 && (
         <div className='my-10 space-y-2'>

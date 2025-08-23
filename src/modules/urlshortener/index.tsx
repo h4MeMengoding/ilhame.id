@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { FiLink2 } from 'react-icons/fi';
 
 import Breakline from '@/common/components/elements/Breakline';
 import SectionHeading from '@/common/components/elements/SectionHeading';
@@ -22,10 +21,14 @@ const UrlShortener = () => {
     <div className='space-y-8'>
       {/* Create URL Section */}
       <div className='space-y-4'>
-        <SectionHeading title='Create Short URL' icon={<FiLink2 size={22} />} />
-        <SectionSubHeading>
-          Transform your long URLs into short, shareable links
-        </SectionSubHeading>
+        <div className='flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0'>
+          <div>
+            <SectionHeading title='URL Shortener Management' />
+            <SectionSubHeading>
+              Transform your long URLs into short, shareable links
+            </SectionSubHeading>
+          </div>
+        </div>
         <CreateUrlForm onSuccess={handleUrlCreated} />
       </div>
 

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { getBlogData } from '@/services/devto';
+import prisma from '@/common/libs/prisma';
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,10 +11,23 @@ export default async function handler(
   }
 
   try {
-    const blogData = await getBlogData({ page: 1, per_page: 100 });
-    const posts = blogData?.data?.posts || [];
+    const blogs = await (prisma as any).blog.findMany({
+      where: {
+        status: 'published',
+      },
+      select: {
+        id: true,
+        slug: true,
+        updated_at: true,
+        created_at: true,
+      },
+      orderBy: {
+        published_at: 'desc',
+      },
+      take: 100,
+    });
 
-    const sitemap = generateSitemap(posts);
+    const sitemap = generateSitemap(blogs);
 
     res.setHeader('Content-Type', 'text/xml');
     res.setHeader(
@@ -35,7 +48,9 @@ function generateSitemap(posts: any[]) {
   const urlsXml = posts
     .map((post) => {
       const url = `${baseUrl}/blog/${post.slug}?id=${post.id}`;
-      const lastmod = new Date(post.date || post.modified).toISOString();
+      const lastmod = new Date(
+        post.updated_at || post.created_at,
+      ).toISOString();
 
       return `
     <url>

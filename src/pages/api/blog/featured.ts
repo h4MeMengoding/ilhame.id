@@ -2,15 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import prisma from '@/common/libs/prisma';
 
-interface BlogWhereInput {
-  status: string;
-  OR?: Array<{
-    title?: { contains: string; mode: 'insensitive' };
-    content?: { contains: string; mode: 'insensitive' };
-    excerpt?: { contains: string; mode: 'insensitive' };
-  }>;
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -22,49 +13,29 @@ export default async function handler(
         'public, s-maxage=60, stale-while-revalidate=30',
       );
 
-      const { page = '1', per_page = '9', search = '' } = req.query;
-
-      const pageNum = Number(page) || 1;
-      const perPageNum = Number(per_page) || 9;
-      const searchTerm = String(search);
-
-      const skip = (pageNum - 1) * perPageNum;
-
-      const where: BlogWhereInput = {
-        status: 'published',
-        ...(searchTerm && {
-          OR: [
-            { title: { contains: searchTerm, mode: 'insensitive' } },
-            { content: { contains: searchTerm, mode: 'insensitive' } },
-            { excerpt: { contains: searchTerm, mode: 'insensitive' } },
-          ],
-        }),
-      };
-
-      const [blogs, totalCount] = await Promise.all([
-        (prisma as any).blog.findMany({
-          where: where as any,
-          include: {
-            author: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
+      const featuredBlogs = await (prisma as any).blog.findMany({
+        where: {
+          status: 'published',
+          is_featured: true,
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
             },
           },
-          orderBy: {
-            published_at: 'desc',
-          },
-          skip,
-          take: perPageNum,
-        }),
-        (prisma as any).blog.count({ where: where as any }),
-      ]);
+        },
+        orderBy: {
+          published_at: 'desc',
+        },
+        take: 4,
+      });
 
       // Transform to match existing blog structure
       const transformedBlogs = await Promise.all(
-        blogs.map(async (blog: any) => {
+        featuredBlogs.map(async (blog: any) => {
           const contentMeta = await prisma.contentmeta.findUnique({
             where: { slug: blog.slug },
             select: { views: true },
@@ -96,23 +67,19 @@ export default async function handler(
         }),
       );
 
-      const totalPages = Math.ceil(totalCount / perPageNum);
-
       const responses = {
         status: true,
         data: {
-          total_pages: totalPages,
-          total_posts: totalCount,
-          page: pageNum,
-          per_page: perPageNum,
           posts: transformedBlogs,
         },
       };
 
       res.status(200).json(responses);
     } catch (error) {
-      console.error('Error fetching blogs:', error);
-      res.status(500).json({ status: false, error: 'Failed to fetch blogs' });
+      console.error('Error fetching featured blogs:', error);
+      res
+        .status(500)
+        .json({ status: false, error: 'Failed to fetch featured blogs' });
     }
   } else {
     res.setHeader('Allow', ['GET']);

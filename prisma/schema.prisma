@@ -41,6 +41,7 @@ model User {
   created_at  DateTime @default(now())
   updated_at  DateTime @default(now())
   is_active   Boolean  @default(true)
+  blogs       Blog[]
 
   @@map("users")
 }
@@ -60,4 +61,22 @@ model ShortUrl {
   is_active   Boolean  @default(true)
 
   @@map("shorturls")
+}
+
+model Blog {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  content     String   @db.Text
+  excerpt     String?  @db.Text
+  featured_image_url String?
+  status      String   @default("draft") // draft, published
+  author_id   Int
+  author      User     @relation(fields: [author_id], references: [id])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+  published_at DateTime?
+  is_featured Boolean  @default(false)
+
+  @@map("blogs")
 }
