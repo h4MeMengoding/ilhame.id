@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { FiCopy, FiExternalLink, FiCode } from 'react-icons/fi';
+import { FiCode, FiCopy, FiExternalLink } from 'react-icons/fi';
 
 const ManualSequenceFix: React.FC = () => {
   const [showSQL, setShowSQL] = useState(false);

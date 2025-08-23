@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { FiTool, FiRefreshCw } from 'react-icons/fi';
+import { FiRefreshCw, FiTool } from 'react-icons/fi';
 
 interface SequenceFixerProps {
   onFixComplete?: () => void;

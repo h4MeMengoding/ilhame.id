@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { FiUpload, FiCheck, FiX } from 'react-icons/fi';
+import { FiCheck, FiUpload, FiX } from 'react-icons/fi';
 
 interface BucketTestProps {
   onSuccess?: () => void;

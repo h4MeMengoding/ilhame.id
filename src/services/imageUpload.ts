@@ -1,8 +1,8 @@
-import { supabase, PROJECTS_BUCKET } from '@/common/libs/supabase';
 import {
   compressImage,
   validateImageFile,
 } from '@/common/helpers/imageCompression';
+import { PROJECTS_BUCKET, supabase } from '@/common/libs/supabase';
 
 export interface UploadImageResult {
   url: string;

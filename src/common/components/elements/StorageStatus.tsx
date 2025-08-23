@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import {
-  FiCheck,
-  FiX,
-  FiRefreshCw,
-  FiInfo,
-  FiExternalLink,
   FiAlertTriangle,
+  FiCheck,
+  FiExternalLink,
+  FiInfo,
+  FiRefreshCw,
+  FiX,
 } from 'react-icons/fi';
 
 interface StorageStatusProps {

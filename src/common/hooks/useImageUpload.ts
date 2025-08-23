@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { uploadProjectImage, deleteProjectImage } from '@/services/imageUpload';
+
+import { deleteProjectImage, uploadProjectImage } from '@/services/imageUpload';
 
 export interface UseImageUploadOptions {
   onUploadSuccess?: (url: string) => void;

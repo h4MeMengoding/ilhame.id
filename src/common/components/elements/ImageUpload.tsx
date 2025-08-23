@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
-import { FiUpload, FiX, FiImage, FiLink } from 'react-icons/fi';
+import React, { useRef, useState } from 'react';
+import { FiImage, FiLink, FiUpload, FiX } from 'react-icons/fi';
+
 import { useImageUpload } from '@/common/hooks/useImageUpload';
 
 interface ImageUploadProps {

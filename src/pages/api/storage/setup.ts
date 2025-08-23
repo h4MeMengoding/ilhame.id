@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase, PROJECTS_BUCKET } from '@/common/libs/supabase';
+
+import { PROJECTS_BUCKET, supabase } from '@/common/libs/supabase';
 
 type Data = {
   status: boolean;
