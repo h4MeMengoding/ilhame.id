@@ -99,3 +99,17 @@ model Comment {
 
   @@map("comments")
 }
+
+model Gallery {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?  @db.Text
+  image_url   String
+  category    String?
+  is_featured Boolean  @default(false)
+  is_published Boolean @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+
+  @@map("gallery")
+}

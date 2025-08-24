@@ -11,6 +11,7 @@ import {
   FiCoffee as ProjectIcon,
   FiCpu as DashboardIcon,
   FiEdit3 as BlogIcon,
+  FiImage as GalleryIcon,
   FiPieChart as AnalyticsIcon,
   FiPocket as HomeIcon,
   FiUser as ProfileIcon,
@@ -50,6 +51,15 @@ export const MENU_ITEMS: MenuItemProps[] = [
     isShow: true,
     isExternal: false,
     eventName: 'Pages: Projects',
+    type: 'Pages',
+  },
+  {
+    title: 'Gallery',
+    href: '/gallery',
+    icon: <GalleryIcon size={iconSize} />,
+    isShow: true,
+    isExternal: false,
+    eventName: 'Pages: Gallery',
     type: 'Pages',
   },
   {

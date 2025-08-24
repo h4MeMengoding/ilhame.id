@@ -1,13 +1,20 @@
 import Image from 'next/image';
-import { FiEdit3, FiFolder, FiLink2, FiLogOut, FiUser } from 'react-icons/fi';
+import {
+  FiEdit3,
+  FiFolder,
+  FiImage,
+  FiLink2,
+  FiLogOut,
+  FiUser,
+} from 'react-icons/fi';
 
 import Card from '@/common/components/elements/Card';
 import { useAuth } from '@/common/context/AuthContext';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  activeTab: 'urls' | 'projects' | 'blogs';
-  onTabChange: (tab: 'urls' | 'projects' | 'blogs') => void;
+  activeTab: 'urls' | 'projects' | 'blogs' | 'gallery';
+  onTabChange: (tab: 'urls' | 'projects' | 'blogs' | 'gallery') => void;
 }
 
 const DashboardLayout = ({
@@ -41,6 +48,12 @@ const DashboardLayout = ({
             label: 'Blog Posts',
             icon: <FiEdit3 className='h-5 w-5' />,
             description: 'Manage blog posts',
+          },
+          {
+            id: 'gallery' as const,
+            label: 'Gallery',
+            icon: <FiImage className='h-5 w-5' />,
+            description: 'Manage photo gallery',
           },
         ]
       : []),
