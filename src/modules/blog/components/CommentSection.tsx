@@ -2,7 +2,13 @@ import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { FiMessageCircle, FiSend, FiUser } from 'react-icons/fi';
+import {
+  FiMessageCircle,
+  FiSend,
+  FiShield,
+  FiTrash2,
+  FiUser,
+} from 'react-icons/fi';
 import useSWR from 'swr';
 
 import { useAuth } from '@/common/context/AuthContext';
@@ -12,6 +18,7 @@ interface User {
   id: number;
   name: string;
   avatar_url?: string;
+  role?: string;
 }
 
 interface Comment {
@@ -29,10 +36,35 @@ interface CommentSectionProps {
 interface CommentItemProps {
   comment: Comment;
   onReply: (parentId: number) => void;
+  onDelete: (commentId: number) => void;
   replyingTo: number | null;
 }
 
-const CommentItem = ({ comment, onReply, replyingTo }: CommentItemProps) => {
+const CommentItem = ({
+  comment,
+  onReply,
+  onDelete,
+  replyingTo,
+}: CommentItemProps) => {
+  const { user: currentUser } = useAuth();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const isAdmin = currentUser?.role === 'admin';
+  const canDelete = isAdmin || currentUser?.id === comment.user.id;
+
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to delete this comment?')) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await onDelete(comment.id);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className='border-l-2 border-neutral-200 pl-4 dark:border-neutral-700'>
       <div className='flex space-x-3'>
@@ -54,6 +86,12 @@ const CommentItem = ({ comment, onReply, replyingTo }: CommentItemProps) => {
             <p className='text-sm font-medium text-neutral-900 dark:text-neutral-100'>
               {comment.user.name}
             </p>
+            {comment.user.role === 'admin' && (
+              <span className='inline-flex items-center space-x-1 rounded-full bg-green-500 px-2 py-0.5 text-xs font-medium text-white'>
+                <FiShield className='h-3 w-3' />
+                <span>Admin</span>
+              </span>
+            )}
             <p className='text-xs text-neutral-500 dark:text-neutral-400'>
               {formatDistanceToNow(new Date(comment.created_at), {
                 addSuffix: true,
@@ -65,13 +103,23 @@ const CommentItem = ({ comment, onReply, replyingTo }: CommentItemProps) => {
               {comment.content}
             </p>
           </div>
-          <div className='mt-2'>
+          <div className='mt-2 flex items-center space-x-3'>
             <button
               onClick={() => onReply(comment.id)}
               className='text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300'
             >
               Reply
             </button>
+            {canDelete && (
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className='inline-flex items-center space-x-1 text-xs font-medium text-red-600 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-red-400 dark:hover:text-red-300'
+              >
+                <FiTrash2 className='h-3 w-3' />
+                <span>{isDeleting ? 'Deleting...' : 'Delete'}</span>
+              </button>
+            )}
           </div>
 
           {/* Replies */}
@@ -82,6 +130,7 @@ const CommentItem = ({ comment, onReply, replyingTo }: CommentItemProps) => {
                   key={reply.id}
                   comment={reply}
                   onReply={onReply}
+                  onDelete={onDelete}
                   replyingTo={replyingTo}
                 />
               ))}
@@ -215,6 +264,9 @@ const CommentForm = ({
 
 const CommentSection = ({ blogId }: CommentSectionProps) => {
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
+  const [deletedComments, setDeletedComments] = useState<Set<number>>(
+    new Set(),
+  );
 
   const {
     data: commentsData,
@@ -224,13 +276,75 @@ const CommentSection = ({ blogId }: CommentSectionProps) => {
 
   const comments = commentsData?.data || [];
 
+  // Filter out deleted comments immediately
+  const filteredComments = comments
+    .filter((comment: Comment) => !deletedComments.has(comment.id))
+    .map((comment: Comment) => ({
+      ...comment,
+      replies:
+        comment.replies?.filter((reply) => !deletedComments.has(reply.id)) ||
+        [],
+    }));
+
   const handleCommentSubmitted = () => {
     mutateComments();
     setReplyingTo(null);
+    // Clear deleted comments set when new data is fetched
+    setDeletedComments(new Set());
   };
 
   const handleReply = (parentId: number) => {
     setReplyingTo(replyingTo === parentId ? null : parentId);
+  };
+
+  const handleDelete = async (commentId: number) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+
+      // Immediately mark as deleted in local state
+      setDeletedComments((prev) => {
+        const newSet = new Set(prev);
+        newSet.add(commentId);
+        return newSet;
+      });
+
+      const response = await fetch(
+        `/api/blog/${blogId}/comments/${commentId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success('Comment deleted successfully');
+        // Refresh data from server after a short delay
+        setTimeout(() => {
+          mutateComments();
+        }, 500);
+      } else {
+        // Revert the local deletion if API failed
+        setDeletedComments((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(commentId);
+          return newSet;
+        });
+        toast.error(result.message || 'Failed to delete comment');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      // Revert the local deletion on error
+      setDeletedComments((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(commentId);
+        return newSet;
+      });
+      toast.error('Failed to delete comment');
+    }
   };
 
   if (error) {
@@ -248,7 +362,7 @@ const CommentSection = ({ blogId }: CommentSectionProps) => {
       <div className='flex items-center space-x-2'>
         <FiMessageCircle className='h-5 w-5 text-neutral-600 dark:text-neutral-400' />
         <h3 className='text-lg font-semibold text-neutral-900 dark:text-neutral-100'>
-          Comments ({comments.length})
+          Comments ({filteredComments.length})
         </h3>
       </div>
 
@@ -256,13 +370,14 @@ const CommentSection = ({ blogId }: CommentSectionProps) => {
       <CommentForm blogId={blogId} onSubmit={handleCommentSubmitted} />
 
       {/* Comments List */}
-      {comments.length > 0 ? (
+      {filteredComments.length > 0 ? (
         <div className='space-y-6'>
-          {comments.map((comment: Comment) => (
+          {filteredComments.map((comment: Comment) => (
             <div key={comment.id}>
               <CommentItem
                 comment={comment}
                 onReply={handleReply}
+                onDelete={handleDelete}
                 replyingTo={replyingTo}
               />
 

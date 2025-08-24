@@ -22,6 +22,7 @@ export default async function handler(
               id: true,
               name: true,
               avatar_url: true,
+              role: true,
             },
           },
           replies: {
@@ -31,6 +32,7 @@ export default async function handler(
                   id: true,
                   name: true,
                   avatar_url: true,
+                  role: true,
                 },
               },
             },
@@ -82,6 +84,7 @@ export default async function handler(
               id: true,
               name: true,
               avatar_url: true,
+              role: true,
             },
           },
         },
