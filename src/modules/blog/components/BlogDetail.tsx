@@ -8,6 +8,7 @@ import { BlogDetailProps } from '@/common/types/blog';
 import { fetcher } from '@/services/fetcher';
 
 import BlogHeader from './BlogHeader';
+import CommentSection from './CommentSection';
 
 const BlogDetail = ({
   id,
@@ -101,6 +102,9 @@ const BlogDetail = ({
         </div>
       )}
       <Breakline className='!my-10' />
+
+      {/* Comments Section */}
+      <CommentSection blogId={id} />
     </>
   );
 };

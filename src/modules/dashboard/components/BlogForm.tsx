@@ -21,10 +21,9 @@ interface BlogFormProps {
   blog?: Blog | null;
   onSuccess: () => void;
   onCancel: () => void;
-  mutate?: () => void;
 }
 
-const BlogForm = ({ blog, onSuccess, onCancel, mutate }: BlogFormProps) => {
+const BlogForm = ({ blog, onSuccess, onCancel }: BlogFormProps) => {
   const [formData, setFormData] = useState({
     title: blog?.title || '',
     slug: blog?.slug || '',

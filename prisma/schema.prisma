@@ -42,6 +42,7 @@ model User {
   updated_at  DateTime @default(now())
   is_active   Boolean  @default(true)
   blogs       Blog[]
+  comments    Comment[]
 
   @@map("users")
 }
@@ -77,6 +78,24 @@ model Blog {
   updated_at  DateTime @default(now())
   published_at DateTime?
   is_featured Boolean  @default(false)
+  comments    Comment[]
 
   @@map("blogs")
+}
+
+model Comment {
+  id          Int      @id @default(autoincrement())
+  content     String   @db.Text
+  blog_id     Int
+  blog        Blog     @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+  user_id     Int
+  user        User     @relation(fields: [user_id], references: [id])
+  parent_id   Int?     // For nested comments/replies
+  parent      Comment? @relation("CommentReplies", fields: [parent_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  replies     Comment[] @relation("CommentReplies")
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+  is_approved Boolean  @default(true)
+
+  @@map("comments")
 }

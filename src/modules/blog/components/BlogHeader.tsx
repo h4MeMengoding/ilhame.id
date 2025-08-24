@@ -66,7 +66,7 @@ const BlogHeader = ({
       )}
       <div className='mb-6 flex flex-col justify-between gap-2 border-b border-dashed border-neutral-600 pb-6 pt-5 text-[14px] text-neutral-600 dark:text-neutral-400 sm:flex-row'>
         <div>
-          Diterbitkan tanggal
+          Published on
           <span className='px-1 font-medium'>
             {published_at ? formatDate(published_at) : ''}
           </span>
@@ -84,7 +84,7 @@ const BlogHeader = ({
             <ClockIcon size={16} />
             <div className='ml-0.5 flex gap-1'>
               <span>{reading_time_minutes}</span>
-              <span>Menit Membaca</span>
+              <span>Min Read</span>
             </div>
           </div>
         </div>

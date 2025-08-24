@@ -5,7 +5,6 @@ import useSWR from 'swr';
 import NavigationSection from '@/common/components/elements/NavigationSection';
 import { parseUrl } from '@/common/helpers';
 import { SubContentMetaProps } from '@/common/types/learn';
-import GiscusComment from '@/modules/blog/components/GiscusComment';
 import { fetcher } from '@/services/fetcher';
 
 import ContentBody from './ContentBody';
@@ -36,7 +35,6 @@ const ContentDetail = ({ content, frontMatter }: ContentDetailProps) => {
 
   const meta = frontMatter;
   const isShowPlayground = meta?.is_playground ?? false;
-  const isShowComment = meta?.is_comment ?? false;
   const initialCode = meta?.initial_code ?? '';
 
   const { data: resContentData } = useSWR(
@@ -95,14 +93,6 @@ const ContentDetail = ({ content, frontMatter }: ContentDetailProps) => {
         nextTitle={nextTitle}
       />
       {isShowPlayground && <ContentPlayground initialCode={initialCode} />}
-      {isShowComment && (
-        <section
-          id='comments'
-          className='my-10 border-t border-gray-300 dark:border-neutral-700'
-        >
-          <GiscusComment />
-        </section>
-      )}
     </>
   );
 };

@@ -10,12 +10,11 @@ export default async function handler(
       'public, s-maxage=60, stale-while-revalidate=30',
     );
 
-    // For now, return empty comments since we're using internal blog system
-    // In the future, we can implement a comment system if needed
+    // Comments system now uses internal authentication - see /api/blog/[id]/comments
     res.status(200).json({
       status: true,
       data: [],
-      message: 'Comments system temporarily disabled - using Giscus instead',
+      message: 'Comments system migrated to internal authentication',
     });
   } catch (error) {
     res.status(200).json({ status: false, error });

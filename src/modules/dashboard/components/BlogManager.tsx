@@ -192,7 +192,6 @@ const BlogManager = () => {
             setIsFormOpen(false);
             setEditingBlog(null);
           }}
-          mutate={mutate}
         />
       )}
 

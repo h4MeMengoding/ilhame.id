@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { GetServerSideProps, NextPage } from 'next';
-import dynamic from 'next/dynamic';
 import { NextSeo } from 'next-seo';
 import { useEffect } from 'react';
 
@@ -9,10 +8,6 @@ import Container from '@/common/components/elements/Container';
 import { formatExcerpt } from '@/common/helpers';
 import { BlogDetailProps } from '@/common/types/blog';
 import BlogDetail from '@/modules/blog/components/BlogDetail';
-
-const GiscusComment = dynamic(
-  () => import('@/modules/blog/components/GiscusComment'),
-);
 
 interface BlogDetailPageProps {
   blog: {
@@ -63,9 +58,6 @@ const BlogDetailPage: NextPage<BlogDetailPageProps> = ({ blog }) => {
       <Container data-aos='fade-up'>
         <BackButton url='/blog' />
         <BlogDetail {...blogData} />
-        <section id='comments'>
-          <GiscusComment isEnableReaction={false} />
-        </section>
       </Container>
     </>
   );
