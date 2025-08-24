@@ -13,7 +13,7 @@ const PAGE_DESCRIPTION = 'Various statuses available in real-time';
 const StatusPage: NextPage = () => {
   return (
     <>
-      <NextSeo title={`${PAGE_TITLE} - Ilham Shofa`} />
+      <NextSeo title={`${PAGE_TITLE}`} />
       <Container data-aos='fade-up'>
         <PageHeading title={PAGE_TITLE} description={PAGE_DESCRIPTION} />
         <Status />

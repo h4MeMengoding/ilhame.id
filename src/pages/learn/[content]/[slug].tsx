@@ -29,6 +29,8 @@ const LearnContentDetailPage: NextPage<{ data: MdxFileContentProps }> = ({
       <NextSeo
         title={`Learn ${meta?.category} : ${PAGE_TITLE} - Ilham Shofa`}
         description={PAGE_DESCRIPTION}
+        noindex={true}
+        nofollow={true}
         openGraph={{
           type: 'article',
           article: {

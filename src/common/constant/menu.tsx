@@ -7,7 +7,6 @@ import {
   BsTwitter as TwitterIcon,
 } from 'react-icons/bs';
 import {
-  FiBookOpen as LearnIcon,
   FiCoffee as ProjectIcon,
   FiCpu as DashboardIcon,
   FiEdit3 as BlogIcon,
@@ -18,7 +17,6 @@ import {
 } from 'react-icons/fi';
 import { HiStatusOnline as StatusIcon } from 'react-icons/hi';
 import { PiChatCircleDotsBold as ChatIcon } from 'react-icons/pi';
-import { SiJavascript } from 'react-icons/si';
 import { SiBetterstack } from 'react-icons/si';
 
 import { MenuItemProps } from '../types/menu';
@@ -71,15 +69,15 @@ export const MENU_ITEMS: MenuItemProps[] = [
     eventName: 'Pages: Blog',
     type: 'Pages',
   },
-  {
-    title: 'Learn',
-    href: '/learn',
-    icon: <LearnIcon size={iconSize} />,
-    isShow: true,
-    isExternal: false,
-    eventName: 'Pages: Learn',
-    type: 'Pages',
-  },
+  // {
+  //   title: 'Learn',
+  //   href: '/learn',
+  //   icon: <LearnIcon size={iconSize} />,
+  //   isShow: true,
+  //   isExternal: false,
+  //   eventName: 'Pages: Learn',
+  //   type: 'Pages',
+  // },
   {
     title: 'About',
     href: '/about',
@@ -119,15 +117,15 @@ export const MENU_ITEMS: MenuItemProps[] = [
 ];
 
 export const MENU_APPS: MenuItemProps[] = [
-  {
-    title: 'JS Playground',
-    href: '/playground',
-    icon: <SiJavascript size={iconSize} />,
-    isShow: true,
-    isExternal: false,
-    eventName: 'Pages: Playground',
-    type: 'Pages',
-  },
+  // {
+  //   title: 'JS Playground',
+  //   href: '/playground',
+  //   icon: <SiJavascript size={iconSize} />,
+  //   isShow: true,
+  //   isExternal: false,
+  //   eventName: 'Pages: Playground',
+  //   type: 'Pages',
+  // },
 ];
 
 export const SOCIAL_MEDIA: MenuItemProps[] = [

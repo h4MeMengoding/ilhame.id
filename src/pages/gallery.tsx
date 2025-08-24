@@ -1,10 +1,14 @@
 import { GetServerSideProps } from 'next';
-import { NextSeo } from 'next-seo';
 import { useState } from 'react';
 import useSWR from 'swr';
 
 import Container from '@/common/components/elements/Container';
 import PageHeading from '@/common/components/elements/PageHeading';
+import SEO from '@/common/components/SEO';
+import {
+  generateBreadcrumbSchema,
+  generatePersonSchema,
+} from '@/common/libs/structured-data';
 import GalleryMasonry from '@/modules/gallery/components/GalleryMasonry';
 import { fetcher } from '@/services/fetcher';
 
@@ -51,11 +55,37 @@ export default function GalleryPage({ initialGalleryItems }: GalleryPageProps) {
   const PAGE_DESCRIPTION =
     'A collection of photos and images that capture moments, experiences, and inspirations.';
 
+  const structuredData = [
+    generatePersonSchema(),
+    generateBreadcrumbSchema([
+      { name: 'Home', url: 'https://ilhame.id' },
+      { name: 'Gallery', url: 'https://ilhame.id/gallery' },
+    ]),
+  ];
+
   return (
     <>
-      <NextSeo
-        title={`${PAGE_TITLE} - Ilham Suhendar`}
+      <SEO
+        title={`${PAGE_TITLE}`}
         description={PAGE_DESCRIPTION}
+        canonical='https://ilhame.id/gallery'
+        openGraph={{
+          type: 'website',
+          locale: 'id_ID',
+          url: 'https://ilhame.id/gallery',
+          title: `${PAGE_TITLE} - Ilham Shofa`,
+          description: PAGE_DESCRIPTION,
+          images: [
+            {
+              url: 'https://i.imgur.com/fj8knf5.png',
+              width: 1200,
+              height: 630,
+              alt: 'Ilham Shofa Gallery',
+            },
+          ],
+          siteName: 'Ilham Shofa',
+        }}
+        structuredData={structuredData}
       />
       <Container data-aos='fade-up'>
         <PageHeading title={PAGE_TITLE} description={PAGE_DESCRIPTION} />

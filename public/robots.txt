@@ -6,6 +6,8 @@ Disallow: /dashboard
 Disallow: /url/dashboard
 Disallow: /login
 Disallow: /register
+Disallow: /learn
+Disallow: /playground
 Disallow: /_next/
 Disallow: /admin
 
@@ -15,6 +17,8 @@ Allow: /
 Disallow: /api/
 Disallow: /dashboard
 Disallow: /url/dashboard
+Disallow: /learn
+Disallow: /playground
 
 # Host
 Host: https://ilhame.id

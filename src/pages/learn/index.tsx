@@ -15,7 +15,7 @@ const LearnPage: NextPage = () => {
 
   return (
     <>
-      <NextSeo title={`${PAGE_TITLE} - Ilham Shofa`} />
+      <NextSeo title={`${PAGE_TITLE}`} noindex={true} nofollow={true} />
       <Container data-aos='fade-up'>
         <PageHeading title={PAGE_TITLE} description={PAGE_DESCRIPTION} />
         <LearnModule contents={filteredContents} />

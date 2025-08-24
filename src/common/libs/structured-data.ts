@@ -10,7 +10,7 @@ export const generatePersonSchema = () => ({
     'https://instagram.com/ilham.shff',
     'https://linkedin.com/in/ilhamshofa',
   ],
-  jobTitle: 'Beginner Developer and Videographer',
+  jobTitle: 'Code the Future & Capture the Moment',
   worksFor: {
     '@type': 'Organization',
     name: 'Freelancer',
@@ -33,7 +33,7 @@ export const generatePersonSchema = () => ({
   birthPlace: 'Indonesia',
   nationality: 'Indonesian',
   description:
-    'Beginner Developer, Content Creator, and Tech Enthusiast passionate about web development, photography, and videography.',
+    'Creative, Code and Tech Enthusiast passionate about web development, photography, and videography.',
 });
 
 export const generateWebsiteSchema = () => ({
@@ -43,7 +43,7 @@ export const generateWebsiteSchema = () => ({
   alternateName: 'ilhame.id',
   url: 'https://ilhame.id',
   description:
-    'Personal portfolio website of Ilham Shofa - Beginner Developer and Content Creator',
+    'Personal portfolio website of Ilham Shofa - Code the Future & Capture the Moment',
   author: {
     '@type': 'Person',
     name: 'Ilham Shofa',
@@ -139,7 +139,7 @@ export const generateOrganizationSchema = () => ({
   url: 'https://ilhame.id',
   logo: 'https://i.imgur.com/fj8knf5.png',
   description:
-    'Personal portfolio and blog of Ilham Shofa - Beginner Developer and Videographer',
+    'Personal portfolio and blog of Ilham Shofa - Code the Future & Capture the Moment',
   foundingDate: '2023',
   founder: {
     '@type': 'Person',

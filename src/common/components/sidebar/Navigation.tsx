@@ -13,7 +13,7 @@ const Navigation = () => {
       <Breakline className='mx-1' />
       <div className='space-y-1'>
         <div className='px-4'>
-          <span className='text-sm text-neutral-600'>Apps</span>
+          {/* <span className='text-sm text-neutral-600'>Apps</span> */}
         </div>
         <Menu list={filteredAppsMenu} />
       </div>

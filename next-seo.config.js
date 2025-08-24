@@ -1,14 +1,14 @@
 const canonicalUrl = 'https://ilhame.id';
 const metaImage = 'https://i.imgur.com/fj8knf5.png';
 const metaDescription =
-  'Ilham Shofa - Beginner Developer, Videographer, and Tech Enthusiast. Passionate about videography, photography, web development, and creative digital solutions. Explore my blog, projects, and learning resources.';
+  'Ilham Shofa - Creative, Code and Tech Enthusiast passionate about web development, photography, and videography.';
 
 const author = 'Ilham Shofa';
 const siteName = 'Ilham Shofa Portfolio';
 
 const defaultSEOConfig = {
-  defaultTitle: `${author} - Beginner Developer & Videography`,
-  titleTemplate: '%s Personal Web',
+  defaultTitle: `${author} - Code the Future & Capture the Moment`,
+  titleTemplate: '%s | Ilham Shofa',
   description: metaDescription,
   canonical: canonicalUrl,
   additionalMetaTags: [
@@ -19,7 +19,7 @@ const defaultSEOConfig = {
     {
       name: 'keywords',
       content:
-        'Ilham Shofa, Beginner Developer, Web Developer, JavaScript, TypeScript, React, Next.js, Node.js, Photography, Videography, Content Creator, Blog, Portfolio, Indonesia Developer',
+        'Ilham Shofa, Creative, Code and Tech Enthusiast, Web Developer, JavaScript, TypeScript, React, Next.js, Node.js, Photography, Videography, Content Creator, Blog, Portfolio, Indonesia Developer',
     },
     {
       name: 'robots',
@@ -62,7 +62,7 @@ const defaultSEOConfig = {
     type: 'website',
     locale: 'id_ID',
     url: canonicalUrl,
-    title: `${author} - Beginner Developer & Videography`,
+    title: `${author} - Code the Future & Capture the Moment`,
     description: metaDescription,
     images: [
       {
@@ -87,7 +87,7 @@ const defaultSEOConfig = {
         type: 'image/png',
       },
     ],
-    siteName: siteName,
+    siteName: author, // Menggunakan nama author sebagai site name
   },
   additionalLinkTags: [
     {

@@ -44,6 +44,8 @@ const LearnContentPage: NextPage<ContentPageProps> = ({
         title={`Learn ${title} - Ilham Shofa`}
         description={description}
         canonical={canonicalUrl}
+        noindex={true}
+        nofollow={true}
         openGraph={{
           url: canonicalUrl,
           images: [

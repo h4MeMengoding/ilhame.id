@@ -56,12 +56,6 @@ export default function Document() {
         />
         <meta name='format-detection' content='telephone=no' />
 
-        {/* Google Site Verification */}
-        <meta
-          name='google-site-verification'
-          content='XyIRwcF70qvInoOXmDaZRRGpQMUBd20GFkcXfO1-Tqk'
-        />
-
         {/* Social Media Meta Tags */}
         <meta name='instagram:site' content='@ilham.shff' />
         <meta name='instagram:creator' content='@ilham.shff' />
@@ -79,46 +73,103 @@ export default function Document() {
           content='strict-origin-when-cross-origin'
         />
 
-        {/* Schema.org untuk Organization */}
+        {/* Schema.org untuk Person & Organization - Prioritas nama author */}
         <script
           type='application/ld+json'
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'WebSite',
-              name: 'Ilham Shofa Portfolio',
-              alternateName: 'ilhame.id',
-              url: 'https://ilhame.id',
-              description:
-                'Personal portfolio website of Ilham Shofa - Beginner Developer and Videography',
-              author: {
+            __html: JSON.stringify([
+              {
+                '@context': 'https://schema.org',
                 '@type': 'Person',
                 name: 'Ilham Shofa',
                 url: 'https://ilhame.id',
+                image: 'https://i.imgur.com/fj8knf5.png',
                 sameAs: [
-                  'https://instagram.com/ilham.shff',
                   'https://github.com/h4MeMengoding',
+                  'https://instagram.com/ilham.shff',
                   'https://linkedin.com/in/ilhamshofa',
                 ],
-                jobTitle: 'Beginner Developer and Videographer',
-                image: 'https://i.imgur.com/fj8knf5.png',
-              },
-              inLanguage: 'id-ID',
-              copyrightYear: new Date().getFullYear(),
-              copyrightHolder: {
-                '@type': 'Person',
-                name: 'Ilham Shofa',
-              },
-              potentialAction: {
-                '@type': 'SearchAction',
-                target: {
-                  '@type': 'EntryPoint',
-                  urlTemplate:
-                    'https://ilhame.id/blog?search={search_term_string}',
+                jobTitle: 'Code the Future & Capture the Moment',
+                worksFor: {
+                  '@type': 'Organization',
+                  name: 'Freelancer',
                 },
-                'query-input': 'required name=search_term_string',
+                knowsAbout: [
+                  'Web Development',
+                  'JavaScript',
+                  'TypeScript',
+                  'React',
+                  'Next.js',
+                  'Node.js',
+                  'Photography',
+                  'Videography',
+                  'Content Creation',
+                ],
+                alumniOf: {
+                  '@type': 'EducationalOrganization',
+                  name: 'Universitas Negeri Semarang',
+                },
+                birthPlace: 'Indonesia',
+                nationality: 'Indonesian',
+                description:
+                  'Creative, Code and Tech Enthusiast passionate about web development, photography, and videography.',
               },
-            }),
+              {
+                '@context': 'https://schema.org',
+                '@type': 'WebSite',
+                name: 'Ilham Shofa',
+                alternateName: 'Ilham Shofa Portfolio',
+                url: 'https://ilhame.id',
+                description:
+                  'Personal portfolio website of Ilham Shofa - Code the Future & Capture the Moment',
+                author: {
+                  '@type': 'Person',
+                  name: 'Ilham Shofa',
+                  url: 'https://ilhame.id',
+                },
+                inLanguage: 'id-ID',
+                copyrightYear: new Date().getFullYear(),
+                copyrightHolder: {
+                  '@type': 'Person',
+                  name: 'Ilham Shofa',
+                },
+                potentialAction: {
+                  '@type': 'SearchAction',
+                  target: {
+                    '@type': 'EntryPoint',
+                    urlTemplate:
+                      'https://ilhame.id/blog?search={search_term_string}',
+                  },
+                  'query-input': 'required name=search_term_string',
+                },
+              },
+              {
+                '@context': 'https://schema.org',
+                '@type': 'Organization',
+                name: 'Ilham Shofa',
+                alternateName: 'ilhame.id',
+                url: 'https://ilhame.id',
+                logo: 'https://i.imgur.com/fj8knf5.png',
+                description:
+                  'Personal portfolio and blog of Ilham Shofa - Code the Future & Capture the Moment',
+                foundingDate: '2023',
+                founder: {
+                  '@type': 'Person',
+                  name: 'Ilham Shofa',
+                },
+                contactPoint: {
+                  '@type': 'ContactPoint',
+                  contactType: 'Customer Service',
+                  url: 'https://ilhame.id/contact',
+                  availableLanguage: ['Indonesian', 'English'],
+                },
+                sameAs: [
+                  'https://github.com/h4MeMengoding',
+                  'https://instagram.com/ilham.shff',
+                  'https://linkedin.com/in/ilhamshofa',
+                ],
+              },
+            ]),
           }}
         />
       </Head>
