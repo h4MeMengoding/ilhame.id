@@ -26,7 +26,7 @@ const UptimeCard = () => {
           <iframe
             className={`w-full overscroll-auto rounded-lg focus:overscroll-contain ${iframeLoaded ? 'block' : 'hidden'}`}
             height={500}
-            src='https://status.hame.my.id'
+            src='https://status.ilhame.id'
             onLoad={handleIframeLoad}
           />
         </div>
