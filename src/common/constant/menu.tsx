@@ -184,8 +184,8 @@ export const SOCIAL_MEDIA: MenuItemProps[] = [
 
 export const EXTERNAL_LINKS: MenuItemProps[] = [
   {
-    title: 'Analitik',
-    href: 'https://analytics.hame.my.id/share/4ABtbrzlELYCOaK8/ilhame.id',
+    title: 'Analytics',
+    href: 'https://anly.ilhame.id/share/vPSXes14Iirw0Y0I/ilhame.id',
     icon: <AnalyticsIcon size={iconSize} />,
     isShow: true,
     isExternal: true,
@@ -194,7 +194,7 @@ export const EXTERNAL_LINKS: MenuItemProps[] = [
   },
   {
     title: 'Uptime',
-    href: 'https://status.hame.my.id',
+    href: 'https://status.ilhame.id',
     icon: <SiBetterstack size={iconSize} />,
     isShow: true,
     isExternal: true,
