@@ -8,7 +8,7 @@ export default function Document() {
         <script
           async
           defer
-          src='https://analytics.hame.my.id/script.js'
+          src='https://anly.ilhame.id/script.js'
           data-website-id='0d4c5eae-072d-4bba-b65e-8834d24dd45f'
         ></script>
 
