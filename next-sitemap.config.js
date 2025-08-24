@@ -48,7 +48,6 @@ module.exports = {
         disallow: ['/api/', '/dashboard', '/url/dashboard'],
       },
     ],
-    additionalSitemaps: ['https://ilhame.id/sitemap.xml'],
   },
   transform: async (config, path) => {
     // Customize priority and changefreq based on path
