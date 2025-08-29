@@ -19,14 +19,36 @@ interface BlogListNewProps {
 }
 
 const BlogListNew = ({ initialData }: BlogListNewProps) => {
+  const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
+
+  // Initialize with default values to prevent hydration mismatch
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const router = useRouter();
+
+  // Set client-side flag after component mounts
+  useEffect(() => {
+    setIsClient(true);
+
+    // Initialize values from router query after client-side mount
+    const queryPage = Number(router.query.page);
+    const querySearch = (router.query.search as string) || '';
+
+    if (!isNaN(queryPage) && queryPage > 0) {
+      setPage(queryPage);
+    }
+
+    if (querySearch) {
+      setSearchTerm(querySearch);
+    }
+  }, [router.query.page, router.query.search]);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const { data, error, mutate, isValidating } = useSWR(
-    `/api/blog?page=${page}&per_page=6&search=${debouncedSearchTerm}`,
+    isClient
+      ? `/api/blog?page=${page}&per_page=6&search=${debouncedSearchTerm}`
+      : null,
     fetcher,
     {
       fallbackData: initialData,
@@ -86,11 +108,20 @@ const BlogListNew = ({ initialData }: BlogListNewProps) => {
   };
 
   useEffect(() => {
+    // Skip on first mount - handled above
+    if (!isClient) return;
+
     const queryPage = Number(router.query.page);
-    if (!isNaN(queryPage) && queryPage !== page) {
+    const querySearch = (router.query.search as string) || '';
+
+    if (!isNaN(queryPage) && queryPage > 0 && queryPage !== page) {
       setPage(queryPage);
     }
-  }, [page, router.query.page, searchTerm]);
+
+    if (querySearch !== searchTerm) {
+      setSearchTerm(querySearch);
+    }
+  }, [router.query.page, router.query.search, isClient, page, searchTerm]);
 
   const renderEmptyState = () =>
     !isValidating &&

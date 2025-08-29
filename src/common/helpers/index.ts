@@ -88,9 +88,12 @@ export const calculateReadingTime = (
 ) => {
   if (!content) return 0;
 
-  const cleanedContent = formatExcerpt(content);
-  const readingTimeMinutes = Math.ceil(
-    cleanedContent.split(/\s+/).length / wordsPerMinute,
-  );
-  return readingTimeMinutes;
+  // Use full content for reading time calculation, not excerpt
+  const cleanedContent = removeHtmlTags(content);
+  const words = cleanedContent
+    .trim()
+    .split(/\s+/)
+    .filter((word) => word.length > 0);
+  const readingTimeMinutes = Math.ceil(words.length / wordsPerMinute);
+  return Math.max(1, readingTimeMinutes); // Minimum 1 minute
 };

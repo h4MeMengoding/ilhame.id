@@ -67,15 +67,33 @@ export const getStaticProps: GetStaticProps = async () => {
       ...post,
       created_at: post.created_at.toISOString(),
       updated_at: post.updated_at.toISOString(),
+      date: post.created_at.toISOString(),
+      modified: post.updated_at.toISOString(),
+      link: `/blog/${post.slug}`,
+      title: {
+        rendered: post.title,
+      },
+      content: {
+        rendered: post.content,
+        protected: false,
+      },
+      excerpt: {
+        rendered: post.excerpt || '',
+        protected: false,
+      },
+      tags_list: [], // Empty array for now, can be populated if needed
     }));
 
     return {
       props: {
         initialBlogData: {
+          status: true,
           data: {
             posts: serializedPosts,
             total_pages: Math.ceil(total / 6),
             total_posts: total,
+            page: 1,
+            per_page: 6,
           },
         },
       },
@@ -85,7 +103,16 @@ export const getStaticProps: GetStaticProps = async () => {
     console.error('Error fetching blog data:', error);
     return {
       props: {
-        initialBlogData: null,
+        initialBlogData: {
+          status: false,
+          data: {
+            posts: [],
+            total_pages: 0,
+            total_posts: 0,
+            page: 1,
+            per_page: 6,
+          },
+        },
       },
       revalidate: 60,
     };

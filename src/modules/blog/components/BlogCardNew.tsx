@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BsArrowRight as MoreIcon } from 'react-icons/bs';
 import { FaRegEye as ViewIcon } from 'react-icons/fa';
 import { HiOutlineClock as ClockIcon } from 'react-icons/hi';
@@ -35,9 +35,14 @@ const BlogCardNew = ({
   isExcerpt = true,
 }: BlogCardProps) => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [isClient, setIsClient] = useState(false);
 
   const readingTimeMinutes = calculateReadingTime(content?.rendered) ?? 0;
   const tagList = tags_list || [];
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const defaultImage = '/images/placeholder.png';
 
@@ -123,13 +128,13 @@ const BlogCardNew = ({
                 <div className='flex items-center gap-1'>
                   <ViewIcon size={14} />
                   <span className='ml-0.5 text-xs font-medium'>
-                    {(total_views_count || 0).toLocaleString()} VIEW
+                    {isClient ? total_views_count || 0 : 0} VIEW
                   </span>
                 </div>
                 <div className='flex items-center gap-1'>
                   <ClockIcon size={14} />
                   <span className='ml-0.5 text-xs font-medium'>
-                    {(readingTimeMinutes || 0).toLocaleString()} MIN READ
+                    {isClient ? readingTimeMinutes || 0 : 0} MIN READ
                   </span>
                 </div>
               </motion.div>

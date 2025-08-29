@@ -99,8 +99,7 @@ const BlogFeaturedHero = ({ data }: BlogFeaturedProps) => {
                 <div className='flex items-center gap-1'>
                   <ViewIcon size={15} />
                   <span className='ml-0.5 text-[13px]'>
-                    {(currentFeatured?.total_views_count || 0).toLocaleString()}{' '}
-                    View
+                    {currentFeatured?.total_views_count || 0} View
                   </span>
                 </div>
               </div>
