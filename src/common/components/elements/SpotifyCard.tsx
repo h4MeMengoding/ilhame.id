@@ -1,4 +1,4 @@
-import Image from 'next/image';
+// import Image from 'next/image';
 import Link from 'next/link';
 import { BiLogoSpotify } from 'react-icons/bi';
 
@@ -27,7 +27,38 @@ const SpotifyCard: React.FC = (): JSX.Element | null => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data, error, isLoading } = useGetDataSpotify();
 
-  if (isLoading || error) {
+  // Spotify functionality disabled - show disabled state
+  if (error || !data) {
+    return (
+      <div className='flex w-full items-center rounded-2xl bg-neutral-100 p-4 dark:bg-neutral-800'>
+        <div className='relative w-full'>
+          <div className='flex items-center gap-8'>
+            <div className='flex h-[75px] w-[75px] items-center justify-center overflow-hidden rounded-lg bg-neutral-300 dark:bg-neutral-700 sm:h-[100px] sm:w-[100px]'>
+              <BiLogoSpotify className='h-8 w-8 text-neutral-500' />
+            </div>
+            <div className='flex flex-col items-start gap-1 md:gap-3'>
+              <h1 className='text-md font-bold text-neutral-500 md:text-lg'>
+                SPOTIFY DISABLED
+              </h1>
+              <p className='text-sm text-neutral-500'>
+                Spotify functionality is currently disabled
+              </p>
+            </div>
+          </div>
+          <Link
+            href='https://spotify.com'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='absolute right-0 top-0'
+          >
+            <BiLogoSpotify className='h-5 w-5 text-neutral-500 md:h-8 md:w-8' />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
     return (
       <div className='flex w-full items-center rounded-2xl bg-neutral-100 p-4 dark:bg-neutral-800'>
         <div className='relative w-full'>
@@ -52,60 +83,7 @@ const SpotifyCard: React.FC = (): JSX.Element | null => {
     );
   }
 
-  if (data) {
-    return (
-      <div className='flex w-full flex-col rounded-xl bg-neutral-100 p-4 dark:bg-neutral-800'>
-        <div className='relative mb-2 w-full'>
-          <h1 className='text-md font-bold md:text-lg'>
-            {data.currentlyPlaying
-              ? 'MENDENGARKAN SPOTIFY'
-              : 'TERAKHIR DIPUTAR'}
-          </h1>
-          <div className='absolute right-0 top-0'>
-            <BiLogoSpotify className='h-6 w-6 md:h-8 md:w-8' size={40} />
-          </div>
-        </div>
-        <div className='flex gap-4'>
-          <Image
-            src={data.albumArt.url}
-            alt='Album art'
-            width={100}
-            height={100}
-            className='rounded-sm'
-          />
-          <div className='flex flex-col justify-center gap-1'>
-            <Link
-              href={data.href}
-              className='text-md font-semibold hover:underline md:text-lg'
-            >
-              {data.name}
-            </Link>
-            <p>
-              {data.artists.map((artist, i) => (
-                <Link
-                  key={i}
-                  href={artist.href}
-                  className='text-sm font-medium hover:underline'
-                >
-                  {artist.name + (i < data.artists.length - 1 ? ', ' : '')}
-                </Link>
-              ))}
-            </p>
-            <p>
-              Album:{' '}
-              <Link
-                href={data.playlistHref}
-                className='text-sm font-medium hover:underline'
-              >
-                {data.playlistName}
-              </Link>
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  // Data will always be null when Spotify is disabled
   return null;
 };
 

@@ -1,4 +1,4 @@
-import useSWR from 'swr';
+// import useSWR from 'swr';
 
 // Define the interfaces
 interface Artist {
@@ -22,22 +22,23 @@ interface FetcherError {
   message: string;
 }
 
-const fetcher = async (url: string): Promise<Data> => {
-  const res = await fetch(url);
-  if (res.ok) {
-    return res.json();
-  } else {
-    const errorData: FetcherError = await res.json();
-    throw new Error(errorData.message);
-  }
-};
+// const fetcher = async (url: string): Promise<Data> => {
+//   const res = await fetch(url);
+//   if (res.ok) {
+//     return res.json();
+//   } else {
+//     const errorData: FetcherError = await res.json();
+//     throw new Error(errorData.message);
+//   }
+// };
 
 export function useGetDataSpotify() {
-  const { data, error } = useSWR<Data>('/api/spotify', fetcher);
+  // Spotify functionality disabled
+  // const { data, error } = useSWR<Data>('/api/spotify', fetcher);
 
   return {
-    data,
-    isLoading: !error && !data,
-    error,
+    data: null,
+    isLoading: false,
+    error: 'Spotify functionality disabled',
   };
 }

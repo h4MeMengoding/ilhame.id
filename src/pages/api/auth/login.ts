@@ -2,8 +2,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { getClientIP, verifyTurnstileToken } from '@/common/libs/turnstile';
 import prisma from '@/common/libs/prisma';
+import { getClientIP, verifyTurnstileToken } from '@/common/libs/turnstile';
 
 export default async function handler(
   req: NextApiRequest,

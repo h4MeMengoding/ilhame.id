@@ -25,12 +25,15 @@ const NowPlayingBar = () => {
     fetcher,
   );
 
-  const activeDevice = devicesData?.find((device) => device.is_active);
+  // Handle case when Spotify is disabled - ensure devicesData is array
+  const safeDevicesData = Array.isArray(devicesData) ? devicesData : [];
+  const activeDevice = safeDevicesData.find((device) => device.is_active);
 
   const handleOpenSongUrl = (url?: string) => {
     url && window.open(url, '_blank');
   };
 
+  // Don't show if Spotify is disabled or no song playing
   if (!playingData?.songUrl) return null;
 
   return (
@@ -91,7 +94,10 @@ const NowPlayingBar = () => {
                 </div>
               </div>
             </Popover.Button>
-            <DevicePopover isShow={isShowDeviceList} devices={devicesData} />
+            <DevicePopover
+              isShow={isShowDeviceList}
+              devices={safeDevicesData}
+            />
           </Popover>
         )}
       </div>
