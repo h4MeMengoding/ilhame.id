@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 import Container from '@/common/components/elements/Container';
+import TurnstileWidget from '@/common/components/elements/TurnstileWidget';
 import withAuth from '@/common/components/hoc/withAuth';
 import { useAuth } from '@/common/context/AuthContext';
 
@@ -14,6 +15,8 @@ const LoginPage = () => {
     password: '',
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileError, setTurnstileError] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
 
@@ -27,21 +30,55 @@ const LoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate CAPTCHA
+    if (!turnstileToken) {
+      toast.error('Please complete the CAPTCHA verification');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const success = await login(formData.email, formData.password);
+      const success = await login(
+        formData.email,
+        formData.password,
+        turnstileToken,
+      );
       if (success) {
         toast.success('Login successful!');
         router.push('/dashboard');
       } else {
         toast.error('Invalid email or password');
+        // Reset CAPTCHA on failed login
+        setTurnstileToken(null);
+        setTurnstileError(false);
       }
     } catch (error: any) {
       toast.error(error.message || 'Login failed');
+      // Reset CAPTCHA on error
+      setTurnstileToken(null);
+      setTurnstileError(false);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleTurnstileSuccess = (token: string) => {
+    setTurnstileToken(token);
+    setTurnstileError(false);
+  };
+
+  const handleTurnstileError = () => {
+    setTurnstileToken(null);
+    setTurnstileError(true);
+    toast.error('CAPTCHA verification failed. Please try again.');
+  };
+
+  const handleTurnstileExpire = () => {
+    setTurnstileToken(null);
+    setTurnstileError(false);
+    toast.error('CAPTCHA expired. Please verify again.');
   };
 
   return (
@@ -98,6 +135,21 @@ const LoginPage = () => {
                   className='mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white'
                   placeholder='Enter your password'
                 />
+              </div>
+
+              {/* Turnstile CAPTCHA */}
+              <div className='space-y-2'>
+                <TurnstileWidget
+                  onSuccess={handleTurnstileSuccess}
+                  onError={handleTurnstileError}
+                  onExpire={handleTurnstileExpire}
+                  className='mb-4'
+                />
+                {turnstileError && (
+                  <p className='text-sm text-red-600 dark:text-red-400'>
+                    CAPTCHA verification failed. Please try again.
+                  </p>
+                )}
               </div>
 
               <div>

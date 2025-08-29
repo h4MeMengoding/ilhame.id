@@ -17,7 +17,11 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (
+    email: string,
+    password: string,
+    turnstileToken?: string,
+  ) => Promise<boolean>;
   register: (
     email: string,
     password: string,
@@ -119,14 +123,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [user, router]);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (
+    email: string,
+    password: string,
+    turnstileToken?: string,
+  ): Promise<boolean> => {
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, turnstileToken }),
       });
 
       const data = await response.json();

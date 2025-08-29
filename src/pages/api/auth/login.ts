@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { NextApiRequest, NextApiResponse } from 'next';
 
+import { getClientIP, verifyTurnstileToken } from '@/common/libs/turnstile';
 import prisma from '@/common/libs/prisma';
 
 export default async function handler(
@@ -13,11 +14,35 @@ export default async function handler(
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
-  const { email, password } = req.body;
+  const { email, password, turnstileToken } = req.body;
 
   // Validate required fields
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  // Verify Turnstile token if provided and enabled
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  const hasTurnstileConfig = !!process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
+
+  if ((hasTurnstileConfig || isDevelopment) && turnstileToken) {
+    try {
+      const clientIP = getClientIP(req);
+      const verification = await verifyTurnstileToken(turnstileToken, clientIP);
+
+      if (!verification.success) {
+        return res.status(400).json({
+          error: 'CAPTCHA verification failed',
+          details: verification['error-codes'],
+        });
+      }
+    } catch (error) {
+      console.error('Turnstile verification error:', error);
+      return res.status(500).json({ error: 'CAPTCHA verification failed' });
+    }
+  } else if (hasTurnstileConfig && !isDevelopment && !turnstileToken) {
+    // If Turnstile is configured for production but no token provided
+    return res.status(400).json({ error: 'CAPTCHA verification required' });
   }
 
   try {
