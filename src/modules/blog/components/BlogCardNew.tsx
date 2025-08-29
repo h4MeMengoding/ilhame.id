@@ -123,13 +123,13 @@ const BlogCardNew = ({
                 <div className='flex items-center gap-1'>
                   <ViewIcon size={14} />
                   <span className='ml-0.5 text-xs font-medium'>
-                    {total_views_count.toLocaleString()} VIEW
+                    {(total_views_count || 0).toLocaleString()} VIEW
                   </span>
                 </div>
                 <div className='flex items-center gap-1'>
                   <ClockIcon size={14} />
                   <span className='ml-0.5 text-xs font-medium'>
-                    {readingTimeMinutes.toLocaleString()} MIN READ
+                    {(readingTimeMinutes || 0).toLocaleString()} MIN READ
                   </span>
                 </div>
               </motion.div>

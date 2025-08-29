@@ -99,6 +99,7 @@ const ImageModal = ({ item, isOpen, onClose }: ImageModalProps) => {
 const GalleryMasonry = ({ items }: GalleryMasonryProps) => {
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
 
   const openModal = (item: GalleryItem) => {
     setSelectedItem(item);
@@ -108,6 +109,10 @@ const GalleryMasonry = ({ items }: GalleryMasonryProps) => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedItem(null);
+  };
+
+  const handleImageLoad = (itemId: number) => {
+    setLoadedImages((prev) => new Set(prev).add(itemId));
   };
 
   if (items.length === 0) {
@@ -130,7 +135,7 @@ const GalleryMasonry = ({ items }: GalleryMasonryProps) => {
     <>
       {/* Masonry Grid - Larger layout with fewer columns */}
       <div className='columns-1 gap-6 space-y-6 sm:columns-2 lg:columns-2 xl:columns-3'>
-        {items.map((item) => (
+        {items.map((item, index) => (
           <div
             key={item.id}
             className='cursor-pointer break-inside-avoid'
@@ -143,9 +148,16 @@ const GalleryMasonry = ({ items }: GalleryMasonryProps) => {
                   alt={item.title}
                   width={600}
                   height={400}
-                  className='h-auto w-full object-cover'
-                  unoptimized
-                  priority
+                  className={`h-auto w-full object-cover transition-all duration-700 ${
+                    loadedImages.has(item.id)
+                      ? 'filter-none'
+                      : 'contrast-90 brightness-110 grayscale filter'
+                  }`}
+                  placeholder='blur'
+                  blurDataURL='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+'
+                  priority={index < 6} // Only first 6 images get priority
+                  sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+                  onLoad={() => handleImageLoad(item.id)}
                 />
 
                 {/* Overlay */}

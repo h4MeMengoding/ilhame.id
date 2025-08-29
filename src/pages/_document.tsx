@@ -15,11 +15,32 @@ export default function Document() {
         {/* DNS Prefetch & Preconnect untuk performance */}
         <link rel='dns-prefetch' href='//fonts.googleapis.com' />
         <link rel='dns-prefetch' href='//i.imgur.com' />
+        <link rel='dns-prefetch' href='//dmbxunmzyqsdrucjjerq.supabase.co' />
+        <link rel='dns-prefetch' href='//api.github.com' />
         <link
           rel='preconnect'
           href='https://fonts.gstatic.com'
           crossOrigin='anonymous'
         />
+
+        {/* Preload critical CSS and fonts */}
+        <link
+          rel='preload'
+          href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap'
+          as='style'
+        />
+        <link
+          rel='stylesheet'
+          href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap'
+          media='print'
+          onLoad={() => "this.media='all'"}
+        />
+        <noscript>
+          <link
+            rel='stylesheet'
+            href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap'
+          />
+        </noscript>
 
         {/* Favicon dan Icons */}
         <link

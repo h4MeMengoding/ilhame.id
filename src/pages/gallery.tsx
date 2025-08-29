@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next';
+import { GetStaticProps } from 'next';
 import { useState } from 'react';
 import useSWR from 'swr';
 
@@ -29,11 +29,13 @@ interface GalleryPageProps {
 export default function GalleryPage({ initialGalleryItems }: GalleryPageProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
-  // Fetch gallery data using SWR with initial data from SSR
+  // Fetch gallery data using SWR with initial data from SSG
   const { data, isLoading, error } = useSWR('/api/gallery', fetcher, {
     fallbackData: { data: initialGalleryItems },
-    revalidateOnMount: true,
-    refreshInterval: 30000, // Refresh every 30 seconds for real-time sync
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    revalidateIfStale: false,
+    dedupingInterval: 300000, // 5 minutes
   });
 
   const galleryItems: GalleryItem[] = data?.data || [];
@@ -151,7 +153,7 @@ export default function GalleryPage({ initialGalleryItems }: GalleryPageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   try {
     // Fetch gallery data directly from the database on the server
     const { PrismaClient } = await import('@prisma/client');
@@ -185,6 +187,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
       props: {
         initialGalleryItems: serializedGalleryItems,
       },
+      // ISR: revalidate every 5 minutes
+      revalidate: 300,
     };
   } catch (error) {
     console.error('Error fetching gallery items:', error);
@@ -193,6 +197,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
       props: {
         initialGalleryItems: [],
       },
+      // ISR: revalidate every minute if error
+      revalidate: 60,
     };
   }
 };

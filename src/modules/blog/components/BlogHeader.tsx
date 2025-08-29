@@ -76,7 +76,7 @@ const BlogHeader = ({
           <div className='flex items-center gap-1 font-medium'>
             <ViewIcon size={16} />
             <div className='ml-0.5 flex gap-1'>
-              <span>{page_views_count?.toLocaleString() || '-'}</span>
+              <span>{(page_views_count || 0).toLocaleString()}</span>
               <span>View</span>
             </div>
           </div>

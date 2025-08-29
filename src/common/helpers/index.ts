@@ -65,7 +65,12 @@ export const removeHtmlTags = (html: string) => {
   }
 };
 
-export const formatExcerpt = (content: string, maxLength = 100) => {
+export const formatExcerpt = (
+  content: string | undefined | null,
+  maxLength = 100,
+) => {
+  if (!content) return '';
+
   const cleanedContent = removeHtmlTags(content);
 
   if (cleanedContent.length <= maxLength) {
@@ -77,7 +82,12 @@ export const formatExcerpt = (content: string, maxLength = 100) => {
   return trimmed + (cleanedContent.length > maxLength ? '...' : '');
 };
 
-export const calculateReadingTime = (content: string, wordsPerMinute = 5) => {
+export const calculateReadingTime = (
+  content: string | undefined | null,
+  wordsPerMinute = 5,
+) => {
+  if (!content) return 0;
+
   const cleanedContent = formatExcerpt(content);
   const readingTimeMinutes = Math.ceil(
     cleanedContent.split(/\s+/).length / wordsPerMinute,

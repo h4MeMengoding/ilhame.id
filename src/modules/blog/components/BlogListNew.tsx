@@ -14,7 +14,11 @@ import { fetcher } from '@/services/fetcher';
 import BlogCardNew from './BlogCardNew';
 import BlogFeaturedSection from './BlogFeaturedSection';
 
-const BlogListNew = () => {
+interface BlogListNewProps {
+  initialData?: any;
+}
+
+const BlogListNew = ({ initialData }: BlogListNewProps) => {
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const router = useRouter();
@@ -25,8 +29,11 @@ const BlogListNew = () => {
     `/api/blog?page=${page}&per_page=6&search=${debouncedSearchTerm}`,
     fetcher,
     {
+      fallbackData: initialData,
       revalidateOnFocus: false,
-      refreshInterval: 0,
+      revalidateOnReconnect: false,
+      revalidateIfStale: false,
+      dedupingInterval: 300000, // 5 minutes
     },
   );
 
