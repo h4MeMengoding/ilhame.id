@@ -1,56 +1,27 @@
-import { GetStaticProps, NextPage } from 'next';
+import { NextPage } from 'next';
 import { NextSeo } from 'next-seo';
-import { SWRConfig } from 'swr';
 
 import Container from '@/common/components/elements/Container';
 import PageHeading from '@/common/components/elements/PageHeading';
 import withAuth from '@/common/components/hoc/withAuth';
 import Dashboard from '@/modules/dashboard';
-import { getGithubUser } from '@/services/github';
-
-interface DashboardPageProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fallback: any;
-}
 
 const PAGE_TITLE = 'Dashboard';
 const PAGE_DESCRIPTION =
   'Manage your projects and URL shortener from one place.';
-const DashboardPage: NextPage<DashboardPageProps> = ({ fallback }) => {
+
+const DashboardPage: NextPage = () => {
   return (
-    <SWRConfig value={{ fallback }}>
+    <>
       <NextSeo title={`${PAGE_TITLE}`} />
       <Container data-aos='fade-up'>
         <PageHeading title={PAGE_TITLE} description={PAGE_DESCRIPTION} />
         <Dashboard />
       </Container>
-    </SWRConfig>
+    </>
   );
 };
 
 export default withAuth(DashboardPage, {
   redirectTo: '/login',
 });
-
-export const getStaticProps: GetStaticProps = async () => {
-  // const readStats = await getReadStats();
-  let githubUserPersonal;
-
-  try {
-    githubUserPersonal = await getGithubUser('personal');
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.warn('Failed to fetch GitHub data during build:', error);
-    githubUserPersonal = { data: null };
-  }
-
-  return {
-    props: {
-      fallback: {
-        // '/api/read-stats': readStats.data,
-        '/api/github?type=personal': githubUserPersonal?.data || null,
-      },
-    },
-    revalidate: 1,
-  };
-};
