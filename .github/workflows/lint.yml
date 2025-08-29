@@ -14,6 +14,8 @@ jobs:
   lint:
     name: ⬣ ESLint
     runs-on: ubuntu-latest
+    env:
+      SKIP_ENV_VALIDATION: true
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
@@ -22,9 +24,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'yarn'
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+        run: yarn install --frozen-lockfile
 
       - name: 🔬 Lint
         run: yarn lint --max-warnings 1000
@@ -32,6 +35,8 @@ jobs:
   typecheck:
     name: ʦ TypeScript
     runs-on: ubuntu-latest
+    env:
+      SKIP_ENV_VALIDATION: true
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
@@ -40,9 +45,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'yarn'
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+        run: yarn install --frozen-lockfile
 
       - name: 🔎 Type check
         run: yarn typecheck
@@ -50,6 +56,8 @@ jobs:
   prettier:
     name: 💅 Prettier
     runs-on: ubuntu-latest
+    env:
+      SKIP_ENV_VALIDATION: true
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
@@ -58,9 +66,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'yarn'
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+        run: yarn install --frozen-lockfile
 
       - name: 💅 Prettier check
         run: yarn format:check
@@ -68,6 +77,8 @@ jobs:
   test:
     name: 🃏 Test
     runs-on: ubuntu-latest
+    env:
+      SKIP_ENV_VALIDATION: true
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
@@ -76,9 +87,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'yarn'
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+        run: yarn install --frozen-lockfile
 
       - name: 🃏 Run jest
         run: yarn test
