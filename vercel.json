@@ -10,13 +10,32 @@
     },
     "src/pages/api/r/[slug].ts": {
       "memory": 128,
-      "maxDuration": 5
+      "maxDuration": 3
+    },
+    "src/pages/api/fast/[slug].ts": {
+      "memory": 128,
+      "maxDuration": 2
+    },
+    "src/pages/api/direct/[slug].ts": {
+      "memory": 128,
+      "maxDuration": 2
     }
   },
   "rewrites": [
     {
       "source": "/s/:slug",
-      "destination": "/api/r/:slug"
+      "destination": "/api/direct/:slug"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(direct|fast|r)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=300"
+        }
+      ]
     }
   ]
 }

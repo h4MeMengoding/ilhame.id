@@ -4,7 +4,7 @@ let prisma: PrismaClient;
 
 const createPrismaClient = () => {
   return new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+    log: process.env.NODE_ENV === 'development' ? ['error'] : [],
     datasources: {
       db: {
         url: process.env.DATABASE_URL,
@@ -14,8 +14,10 @@ const createPrismaClient = () => {
 };
 
 if (process.env.NODE_ENV === 'production') {
+  // In production, create a new client for each serverless function
   prisma = createPrismaClient();
 } else {
+  // In development, reuse the client
   const globalWithPrisma = global as typeof globalThis & {
     prisma: PrismaClient;
   };
@@ -23,14 +25,6 @@ if (process.env.NODE_ENV === 'production') {
     globalWithPrisma.prisma = createPrismaClient();
   }
   prisma = globalWithPrisma.prisma;
-}
-
-// Optimize for serverless environment
-if (process.env.NODE_ENV === 'production') {
-  // Graceful shutdown
-  process.on('beforeExit', async () => {
-    await prisma.$disconnect();
-  });
 }
 
 export default prisma;
