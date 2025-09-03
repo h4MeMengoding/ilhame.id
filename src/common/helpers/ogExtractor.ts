@@ -11,9 +11,9 @@ export interface OGData {
 
 export async function extractOGTags(url: string): Promise<OGData> {
   try {
-    // Add timeout and proper headers
+    // Reduced timeout for faster response on Vercel
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout only
 
     const response = await fetch(url, {
       signal: controller.signal,
@@ -33,7 +33,9 @@ export async function extractOGTags(url: string): Promise<OGData> {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const html = await response.text();
+    // Limit response size to prevent memory issues
+    const text = await response.text();
+    const html = text.length > 500000 ? text.substring(0, 500000) : text;
     const $ = cheerio.load(html);
 
     const ogData: OGData = {

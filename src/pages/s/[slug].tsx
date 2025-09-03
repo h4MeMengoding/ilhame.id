@@ -40,33 +40,35 @@ const RedirectPage = ({
       return;
     }
 
+    // Preload the destination URL for faster redirect
+    const link = document.createElement('link');
+    link.rel = 'prefetch';
+    link.href = originalUrl;
+    document.head.appendChild(link);
+
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
           setIsRedirecting(true);
-          window.location.href = originalUrl;
+          // Use location.replace for faster redirect without history entry
+          window.location.replace(originalUrl);
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
 
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+      document.head.removeChild(link);
+    };
   }, [originalUrl, countdownSeconds, isBotRequest]);
 
   const handleRedirectNow = () => {
     setIsRedirecting(true);
-    window.location.href = originalUrl;
+    window.location.replace(originalUrl);
   };
-
-  // If countdown is 0 or it's a bot request, this component shouldn't render (handled by server-side redirect)
-  // But just in case, redirect immediately
-  useEffect(() => {
-    if (countdownSeconds === 0 || isBotRequest) {
-      window.location.href = originalUrl;
-    }
-  }, [originalUrl, countdownSeconds, isBotRequest]);
 
   // For bot requests, show minimal content but still include OG tags
   if (isBotRequest) {
@@ -210,6 +212,15 @@ const RedirectPage = ({
                 Short link:{' '}
                 <span className='font-mono'>ilhame.id/s/{slug}</span>
               </p>
+              <p className='mt-2 text-xs text-neutral-400 dark:text-neutral-500'>
+                To see this preview page, use:{' '}
+                <Link
+                  href={`/s/${slug}?preview=true`}
+                  className='font-mono text-blue-500 hover:text-blue-600'
+                >
+                  ilhame.id/s/{slug}?preview=true
+                </Link>
+              </p>
             </div>
           </Card>
         </Container>
@@ -232,8 +243,20 @@ export const getServerSideProps: GetServerSideProps = async ({
   }
 
   try {
+    // Set cache headers for faster subsequent requests
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+
     const shortUrl = await prisma.shortUrl.findUnique({
       where: { slug },
+      select: {
+        original_url: true,
+        title: true,
+        description: true,
+        slug: true,
+        is_active: true,
+        expires_at: true,
+        clicks: true,
+      },
     });
 
     if (!shortUrl || !shortUrl.is_active) {
@@ -251,26 +274,9 @@ export const getServerSideProps: GetServerSideProps = async ({
 
     // Get countdown setting from environment variable
     const countdownSeconds = parseInt(
-      process.env.URL_REDIRECT_COUNTDOWN || '5',
+      process.env.URL_REDIRECT_COUNTDOWN || '3', // Reduced default to 3 seconds
       10,
     );
-
-    // Extract OG data from the original URL
-    let ogData: OGData;
-    try {
-      ogData = await extractOGTags(shortUrl.original_url);
-      // Don't use default data, only use what we actually extracted
-    } catch (error) {
-      console.error('Error extracting OG data:', error);
-      ogData = {
-        title: null,
-        description: null,
-        image: null,
-        siteName: null,
-        type: null,
-        url: null,
-      };
-    }
 
     // Check if this is a bot/crawler request
     const userAgent = req.headers['user-agent'] || '';
@@ -279,46 +285,22 @@ export const getServerSideProps: GetServerSideProps = async ({
         userAgent,
       );
 
-    // If it's a bot request, return a special page with OG tags but auto-redirect
-    if (isBotRequest) {
-      // Still increment click count for bots
-      await prisma.shortUrl.update({
-        where: { slug },
-        data: {
-          clicks: {
-            increment: 1,
+    // For bots or immediate redirect, skip OG extraction and redirect immediately
+    if (isBotRequest || countdownSeconds === 0) {
+      // Update click count asynchronously (don't wait for it)
+      prisma.shortUrl
+        .update({
+          where: { slug },
+          data: {
+            clicks: {
+              increment: 1,
+            },
+            updated_at: new Date(),
           },
-          updated_at: new Date(),
-        },
-      });
+        })
+        .catch((error) => console.error('Error updating click count:', error));
 
-      // Return special props for bot rendering
-      return {
-        props: {
-          originalUrl: shortUrl.original_url,
-          title: shortUrl.title || null,
-          description: shortUrl.description || null,
-          slug: shortUrl.slug,
-          countdownSeconds: 0, // Auto redirect for bots
-          ogData,
-          isBotRequest: true,
-        },
-      };
-    }
-
-    // If countdown is 0, redirect immediately on server side
-    if (countdownSeconds === 0) {
-      // Increment click count before redirecting
-      await prisma.shortUrl.update({
-        where: { slug },
-        data: {
-          clicks: {
-            increment: 1,
-          },
-          updated_at: new Date(),
-        },
-      });
-
+      // Redirect immediately
       return {
         redirect: {
           destination: shortUrl.original_url,
@@ -327,16 +309,59 @@ export const getServerSideProps: GetServerSideProps = async ({
       };
     }
 
-    // Increment click count
-    await prisma.shortUrl.update({
-      where: { slug },
-      data: {
-        clicks: {
-          increment: 1,
+    // For regular users, try to extract OG data but with timeout protection
+    let ogData: OGData = {
+      title: null,
+      description: null,
+      image: null,
+      siteName: null,
+      type: null,
+      url: null,
+    };
+
+    // Extract OG data with a race condition - either get it fast or use fallback
+    try {
+      // Set a very short timeout for OG extraction to prevent serverless timeout
+      const ogPromise = extractOGTags(shortUrl.original_url);
+      const timeoutPromise = new Promise<OGData>((resolve) => {
+        setTimeout(() => {
+          resolve({
+            title: shortUrl.title || null,
+            description: shortUrl.description || null,
+            image: null,
+            siteName: null,
+            type: 'website',
+            url: shortUrl.original_url,
+          });
+        }, 2000); // 2 second fallback
+      });
+
+      ogData = await Promise.race([ogPromise, timeoutPromise]);
+    } catch (error) {
+      console.error('Error extracting OG data, using fallback:', error);
+      // Use fallback data from database or default
+      ogData = {
+        title: shortUrl.title || null,
+        description: shortUrl.description || null,
+        image: null,
+        siteName: null,
+        type: 'website',
+        url: shortUrl.original_url,
+      };
+    }
+
+    // Update click count asynchronously (don't wait for it)
+    prisma.shortUrl
+      .update({
+        where: { slug },
+        data: {
+          clicks: {
+            increment: 1,
+          },
+          updated_at: new Date(),
         },
-        updated_at: new Date(),
-      },
-    });
+      })
+      .catch((error) => console.error('Error updating click count:', error));
 
     // Return URL data for confirmation page with countdown
     return {
