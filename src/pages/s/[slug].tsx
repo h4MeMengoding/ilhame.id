@@ -233,6 +233,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
   req,
   res,
+  query,
 }) => {
   const slug = params?.slug as string;
 
@@ -272,6 +273,9 @@ export const getServerSideProps: GetServerSideProps = async ({
       };
     }
 
+    // Check if this is a preview request
+    const isPreviewRequest = query.preview === 'true';
+
     // Get countdown setting from environment variable
     const countdownSeconds = parseInt(
       process.env.URL_REDIRECT_COUNTDOWN || '3', // Reduced default to 3 seconds
@@ -285,8 +289,8 @@ export const getServerSideProps: GetServerSideProps = async ({
         userAgent,
       );
 
-    // For bots or immediate redirect, skip OG extraction and redirect immediately
-    if (isBotRequest || countdownSeconds === 0) {
+    // For bots, immediate redirect (no countdown), or non-preview requests, redirect immediately
+    if (isBotRequest || countdownSeconds === 0 || !isPreviewRequest) {
       // Update click count asynchronously (don't wait for it)
       prisma.shortUrl
         .update({
