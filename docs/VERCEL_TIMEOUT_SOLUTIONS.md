@@ -3,18 +3,21 @@
 ## Multiple API Endpoints Created
 
 ### 1. `/api/direct/[slug].ts` (RECOMMENDED) ⚡
+
 - **Timeout**: 2 seconds max
 - **Features**: Promise.race with 2s timeout, minimal Prisma usage
 - **Memory**: 128MB
 - **Best for**: Production use
 
 ### 2. `/api/fast/[slug].ts` (BACKUP) 🚀
-- **Timeout**: 2 seconds max  
+
+- **Timeout**: 2 seconds max
 - **Features**: Static cache for common URLs, minimal database calls
 - **Memory**: 128MB
 - **Best for**: High-traffic redirects
 
 ### 3. `/api/r/[slug].ts` (FALLBACK) 🔄
+
 - **Timeout**: 3 seconds max
 - **Features**: Original optimized version
 - **Memory**: 128MB
@@ -27,19 +30,22 @@ The system now uses `/api/direct/[slug]` as the primary endpoint via Vercel rewr
 ## Performance Optimizations Applied
 
 ### Database Level:
+
 - ✅ Minimal field selection
-- ✅ Optimized WHERE clauses  
+- ✅ Optimized WHERE clauses
 - ✅ Promise.race with timeout
 - ✅ Async stats updates
 - ✅ Connection pooling optimized
 
 ### Vercel Level:
+
 - ✅ 2-second timeout limit
 - ✅ 128MB memory allocation
 - ✅ Aggressive caching headers
 - ✅ Direct rewrites (no middleware overhead)
 
 ### Code Level:
+
 - ✅ No try-catch overhead for fast path
 - ✅ Early returns for validation
 - ✅ Minimal imports
@@ -56,7 +62,7 @@ curl -I https://your-domain.com/api/direct/your-slug
 # Backup
 curl -I https://your-domain.com/api/fast/your-slug
 
-# Fallback  
+# Fallback
 curl -I https://your-domain.com/api/r/your-slug
 ```
 
@@ -69,7 +75,7 @@ To switch to a different endpoint, update `vercel.json`:
   "rewrites": [
     {
       "source": "/s/:slug",
-      "destination": "/api/fast/:slug"  // Change this line
+      "destination": "/api/fast/:slug" // Change this line
     }
   ]
 }
@@ -81,8 +87,8 @@ If all APIs fail, you can use static redirects in `/api/fast/[slug].ts`:
 
 ```typescript
 const staticRedirects: Record<string, string> = {
-  'github': 'https://github.com/yourusername',
-  'linkedin': 'https://linkedin.com/in/yourprofile',
+  github: 'https://github.com/yourusername',
+  linkedin: 'https://linkedin.com/in/yourprofile',
   // Add your most important links here
 };
 ```
@@ -99,6 +105,7 @@ If database timeouts persist:
 ## Monitoring
 
 Watch these metrics in Vercel dashboard:
+
 - Function duration (should be <1000ms)
 - Error rate (should be <1%)
 - Memory usage (should be <100MB)

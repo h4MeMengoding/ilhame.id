@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-// Super lightweight redirect without any database calls
+import prisma from '@/common/libs/prisma';
+
+// Super lightweight redirect with static cache
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -29,12 +31,8 @@ export default async function handler(
     return;
   }
 
-  // For dynamic redirects, use a minimal approach
+  // For dynamic redirects, use shared prisma client
   try {
-    // Simplified database connection
-    const { PrismaClient } = await import('@prisma/client');
-    const prisma = new PrismaClient();
-
     const shortUrl = await prisma.shortUrl.findFirst({
       where: {
         slug,
@@ -42,8 +40,6 @@ export default async function handler(
       },
       select: { original_url: true },
     });
-
-    await prisma.$disconnect();
 
     if (!shortUrl) {
       res.writeHead(404);

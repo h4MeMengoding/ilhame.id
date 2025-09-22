@@ -14,8 +14,17 @@ const createPrismaClient = () => {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  // In production, create a new client for each serverless function
-  prisma = createPrismaClient();
+  // FIXED: In production, DO NOT create a new client for each function
+  // This was causing excessive connection overhead in serverless environment
+  // Use global singleton pattern even in production
+  const globalWithPrisma = global as typeof globalThis & {
+    prisma: PrismaClient;
+  };
+
+  if (!globalWithPrisma.prisma) {
+    globalWithPrisma.prisma = createPrismaClient();
+  }
+  prisma = globalWithPrisma.prisma;
 } else {
   // In development, reuse the client
   const globalWithPrisma = global as typeof globalThis & {

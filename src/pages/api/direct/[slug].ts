@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-// Simple redirect without external dependencies
+import prisma from '@/common/libs/prisma';
+
+// Optimized redirect endpoint - uses shared Prisma client
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -8,67 +10,73 @@ export default async function handler(
   const { slug } = req.query;
 
   if (!slug || typeof slug !== 'string') {
-    res.writeHead(400);
-    res.end();
+    res.writeHead(400, { 'Content-Type': 'text/plain' });
+    res.end('Bad Request');
     return;
   }
 
   try {
-    // Use fetch for database connection (works on Vercel edge)
-    const dbUrl = process.env.DATABASE_URL;
-    if (!dbUrl) {
-      res.writeHead(500);
-      res.end();
-      return;
-    }
+    // Set cache headers immediately for faster subsequent requests
+    res.setHeader(
+      'Cache-Control',
+      'public, max-age=300, s-maxage=600, stale-while-revalidate=86400',
+    );
 
-    // Direct SQL query via HTTP (if using services like PlanetScale, Supabase, etc.)
-    // For now, fall back to Prisma but with timeout
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Timeout')), 2000); // 2 second timeout
+    // Create timeout promise to prevent hanging
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('Database timeout')), 4000); // 4 second timeout
     });
 
-    const queryPromise = (async () => {
-      const { PrismaClient } = await import('@prisma/client');
-      const prisma = new PrismaClient();
+    // Database query with minimal fields for faster response
+    const queryPromise = prisma.shortUrl.findFirst({
+      where: {
+        slug,
+        is_active: true,
+        OR: [{ expires_at: null }, { expires_at: { gt: new Date() } }],
+      },
+      select: {
+        original_url: true,
+        id: true, // Needed for async click tracking
+      },
+    });
 
-      try {
-        const result = await prisma.shortUrl.findFirst({
-          where: {
-            slug,
-            is_active: true,
-          },
-          select: { original_url: true },
-        });
-
-        await prisma.$disconnect();
-        return result;
-      } catch (error) {
-        await prisma.$disconnect();
-        throw error;
-      }
-    })();
-
+    // Race between query and timeout
     const shortUrl = await Promise.race([queryPromise, timeoutPromise]);
 
-    if (
-      !shortUrl ||
-      typeof shortUrl !== 'object' ||
-      !('original_url' in shortUrl)
-    ) {
-      res.writeHead(404);
-      res.end();
+    if (!shortUrl?.original_url) {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('Short URL not found');
       return;
     }
 
-    // No stats tracking for maximum speed
+    // Update click count asynchronously without blocking the redirect
+    // Use setImmediate to run after response is sent
+    setImmediate(async () => {
+      try {
+        await prisma.shortUrl.update({
+          where: { id: shortUrl.id },
+          data: {
+            clicks: { increment: 1 },
+            updated_at: new Date(),
+          },
+        });
+      } catch (err) {
+        console.error('Failed to update click count:', err);
+      }
+    });
+
+    // Perform redirect immediately
     res.writeHead(301, {
-      Location: shortUrl.original_url as string,
-      'Cache-Control': 'public, max-age=300, s-maxage=300',
+      Location: shortUrl.original_url,
+      'Cache-Control':
+        'public, max-age=300, s-maxage=600, stale-while-revalidate=86400',
     });
     res.end();
   } catch (error) {
-    res.writeHead(500);
-    res.end();
+    console.error('Error in direct redirect:', error);
+
+    // Fallback to a more generic error page or homepage
+    res.writeHead(500, { 'Content-Type': 'text/plain' });
+    res.end('Internal Server Error');
   }
 }

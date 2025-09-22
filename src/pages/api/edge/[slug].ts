@@ -1,59 +1,71 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const config = {
   runtime: 'edge',
+  regions: ['sin1'], // Singapore region - change to match your database region
 };
 
-// Edge runtime for maximum speed - no Node.js overhead
+// Edge function for ultimate speed - runs on Vercel Edge Runtime
 export default async function handler(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const slug = searchParams.get('slug');
+  const url = new URL(req.url);
+  const slug = url.pathname.split('/').pop();
 
   if (!slug) {
     return new Response('Bad Request', { status: 400 });
   }
 
   try {
-    // Direct database query without Prisma overhead
-    const response = await fetch(process.env.DATABASE_URL + '', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query: `
-          SELECT original_url 
-          FROM shorturls 
-          WHERE slug = $1 
-          AND is_active = true 
-          AND (expires_at IS NULL OR expires_at > NOW())
-          LIMIT 1
-        `,
-        params: [slug],
-      }),
-    });
+    // Static redirects for fastest possible response
+    const staticRedirects: Record<string, string> = {
+      github: 'https://github.com/h4MeMengoding',
+      ig: 'https://instagram.com/ilhamshofaaa',
+      linkedin: 'https://linkedin.com/in/ilham-shofa',
+      haii: 'https://example.com', // Replace with actual URL for testing
+      // Add more common redirects here
+    };
 
-    const data = await response.json();
-
-    if (!data.rows || data.rows.length === 0) {
-      return new Response('Not Found', { status: 404 });
+    if (staticRedirects[slug]) {
+      return NextResponse.redirect(staticRedirects[slug], {
+        status: 301,
+        headers: {
+          'Cache-Control': 'public, max-age=3600, s-maxage=7200',
+        },
+      });
     }
 
-    const originalUrl = data.rows[0].original_url;
-
-    // Update click count asynchronously
-    fetch(process.env.DATABASE_URL + '', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query:
-          'UPDATE shorturls SET clicks = clicks + 1, updated_at = NOW() WHERE slug = $1',
-        params: [slug],
-      }),
-    }).catch(() => {
-      // Ignore click count errors silently
+    // For database queries on Edge, call our own API endpoint
+    // This is more reliable than direct database calls
+    const apiUrl = new URL('/api/direct/' + slug, req.url);
+    const response = await fetch(apiUrl.toString(), {
+      method: 'HEAD',
+      headers: {
+        'User-Agent': 'Edge-Function-Internal',
+      },
     });
 
-    return Response.redirect(originalUrl, 301);
+    if (response.status === 301 || response.status === 302) {
+      const location = response.headers.get('Location');
+      if (location) {
+        return NextResponse.redirect(location, {
+          status: 301,
+          headers: {
+            'Cache-Control': 'public, max-age=300, s-maxage=600',
+          },
+        });
+      }
+    }
+
+    // If not found, return 404
+    return new Response('Not Found', { status: 404 });
   } catch (error) {
-    return new Response('Server Error', { status: 500 });
+    console.error('Edge function error:', error);
+
+    // Emergency fallback - redirect to homepage
+    return NextResponse.redirect('/', {
+      status: 302,
+      headers: {
+        'Cache-Control': 'no-cache',
+      },
+    });
   }
 }
