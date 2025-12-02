@@ -9,7 +9,20 @@ const nextConfig = {
     optimizeCss: true,
     legacyBrowsers: false,
     browsersListForSwc: true,
+    // Disable font optimization during build to prevent timeout issues
+    fontLoaders: [
+      {
+        loader: '@next/font/google',
+        options: {
+          subsets: ['latin'],
+          display: 'swap',
+        },
+      },
+    ],
   },
+
+  // Increase timeout for external requests during build
+  staticPageGenerationTimeout: 180,
 
   images: {
     remotePatterns: [
@@ -93,11 +106,6 @@ const nextConfig = {
         permanent: true,
       },
     ];
-  },
-
-  // Enable experimental features for better SEO
-  experimental: {
-    optimizeCss: true,
   },
 
   // Enable webpack bundle analyzer for development
