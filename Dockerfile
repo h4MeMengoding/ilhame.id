@@ -10,8 +10,8 @@ WORKDIR /app
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* ./
 RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci --ignore-scripts; \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile --network-timeout 100000; \
+  elif [ -f package-lock.json ]; then npm ci --ignore-scripts --prefer-offline --no-audit; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
@@ -31,6 +31,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 # Increase timeout for font downloads
 ENV NEXT_FONT_GOOGLE_TIMEOUT=30000
+
+# Optimize build with more memory and parallel processing
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN \
   if [ -f yarn.lock ]; then yarn build; \

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:fast": "NEXT_TELEMETRY_DISABLED=1 NODE_OPTIONS='--max-old-space-size=4096' next build",
     "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "next lint",
@@ -16,7 +17,9 @@
     "test": "jest",
     "test:ci": "jest --ci",
     "prepare": "husky install",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "docker:build": "docker build --build-arg NODE_ENV=production -t ilhame-id .",
+    "docker:build:nocache": "docker build --no-cache --build-arg NODE_ENV=production -t ilhame-id ."
   },
   "dependencies": {
     "@headlessui/react": "^1.7.19",

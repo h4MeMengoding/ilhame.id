@@ -9,6 +9,10 @@ const nextConfig = {
     optimizeCss: true,
     legacyBrowsers: false,
     browsersListForSwc: true,
+    // Enable incremental cache for faster builds
+    incrementalCacheHandlerPath: undefined,
+    // Skip validation for faster builds in production
+    isrMemoryCacheSize: 0,
     // Disable font optimization during build to prevent timeout issues
     fontLoaders: [
       {
@@ -20,6 +24,9 @@ const nextConfig = {
       },
     ],
   },
+
+  // Disable source maps in production for faster builds
+  productionBrowserSourceMaps: false,
 
   // Increase timeout for external requests during build
   staticPageGenerationTimeout: 180,
@@ -110,10 +117,21 @@ const nextConfig = {
 
   // Enable webpack bundle analyzer for development
   webpack: (config, { dev, isServer }) => {
+    // Faster builds with proper caching
+    config.cache = !dev
+      ? false
+      : {
+          type: 'filesystem',
+          buildDependencies: {
+            config: [__filename],
+          },
+        };
+
     // Optimize bundle size
     if (!dev && !isServer) {
       config.optimization = {
         ...config.optimization,
+        minimize: true,
         splitChunks: {
           chunks: 'all',
           cacheGroups: {
@@ -121,11 +139,22 @@ const nextConfig = {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendors',
               chunks: 'all',
+              priority: 10,
+              reuseExistingChunk: true,
+            },
+            common: {
+              minChunks: 2,
+              priority: 5,
+              reuseExistingChunk: true,
             },
           },
         },
       };
     }
+
+    // Faster module resolution
+    config.resolve.symlinks = false;
+
     return config;
   },
 };
