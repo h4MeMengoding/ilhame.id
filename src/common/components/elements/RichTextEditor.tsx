@@ -320,7 +320,8 @@ const RichTextEditor = ({
           border: 1px solid #d1d5db;
           border-radius: 6px;
           color: #374151;
-          font-family: 'Fira Code', Consolas, 'Courier New', monospace;
+          font-family: var(--jakartaSans-font), Consolas, 'Courier New',
+            monospace;
           margin: 1em 0;
           padding: 1em;
           overflow-x: auto;

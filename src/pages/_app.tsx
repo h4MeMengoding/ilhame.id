@@ -15,12 +15,7 @@ import CommandPalette from '@/common/components/elements/CommandPalette';
 import Layout from '@/common/components/layouts';
 import { AuthProvider } from '@/common/context/AuthContext';
 import { CommandPaletteProvider } from '@/common/context/CommandPaletteContext';
-import {
-  firaCode,
-  jakartaSans,
-  onestSans,
-  soraSans,
-} from '@/common/styles/fonts';
+import { jakartaSans } from '@/common/styles/fonts';
 
 import defaultSEOConfig from '../../next-seo.config';
 
@@ -43,9 +38,6 @@ const App = ({ Component, pageProps }: AppProps) => {
         {`
           html {
             --jakartaSans-font: ${jakartaSans.style.fontFamily};
-            --soraSans-font: ${soraSans.style.fontFamily};
-            --firaCode-font: ${firaCode.style.fontFamily};
-            --onestSans-font: ${onestSans.style.fontFamily};
           }
         `}
       </style>
