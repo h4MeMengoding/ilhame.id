@@ -1,0 +1,74 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+.pnp
+.pnp.js
+
+# Testing
+coverage
+.nyc_output
+
+# Next.js
+.next/
+out/
+build
+dist
+.vercel
+
+# Production
+*.log
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+.vscode
+.idea
+
+# Local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Git
+.git
+.gitignore
+.github
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Documentation
+README.md
+*.md
+docs/
+
+# Scripts (optional - remove if needed in container)
+scripts/
+
+# Test files
+**/*.test.js
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.js
+**/*.spec.ts
+**/*.spec.tsx
+__tests__/
+jest.config.js
+jest.setup.js
+
+# Husky
+.husky
+
+# Misc files
+COMPLETE_TIMEOUT_SOLUTION.md
+CRITICAL_TIMEOUT_FIX.js
+REAL_ROOT_CAUSE.js
+SPOTIFY_DISABLED.md
+TIMEOUT_FIX_README.md
