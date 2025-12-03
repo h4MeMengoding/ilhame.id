@@ -36,8 +36,19 @@ ENV NEXT_FONT_GOOGLE_TIMEOUT=30000
 # These will be replaced at runtime with actual values
 ENV NEXT_PUBLIC_SUPABASE_URL="https://placeholder.supabase.co"
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY="placeholder-key"
-ENV DATABASE_URL="placeholder"
-ENV DIRECT_URL="placeholder"
+ENV DATABASE_URL="postgresql://user:password@localhost:5432/dbname?schema=public"
+ENV DIRECT_URL="postgresql://user:password@localhost:5432/dbname?schema=public"
+
+# Firebase dummy configuration (required for guestbook page build)
+ENV NEXT_PUBLIC_FIREBASE_API_KEY="placeholder-api-key"
+ENV NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="placeholder.firebaseapp.com"
+ENV NEXT_PUBLIC_FIREBASE_DB_URL="https://placeholder.firebaseio.com"
+ENV NEXT_PUBLIC_FIREBASE_PROJECT_ID="placeholder-project"
+ENV NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="placeholder.appspot.com"
+ENV NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="123456789"
+ENV NEXT_PUBLIC_FIREBASE_APP_ID="1:123456789:web:placeholder"
+ENV NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="G-PLACEHOLDER"
+ENV NEXT_PUBLIC_FIREBASE_CHAT_DB="messages"
 
 # Build with Turborepo for faster builds and caching
 RUN \
