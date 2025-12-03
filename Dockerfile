@@ -32,6 +32,13 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Increase timeout for font downloads
 ENV NEXT_FONT_GOOGLE_TIMEOUT=30000
 
+# Set dummy environment variables for build
+# These will be replaced at runtime with actual values
+ENV NEXT_PUBLIC_SUPABASE_URL="https://placeholder.supabase.co"
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY="placeholder-key"
+ENV DATABASE_URL="placeholder"
+ENV DIRECT_URL="placeholder"
+
 # Build with Turborepo for faster builds and caching
 RUN \
   if [ -f yarn.lock ]; then yarn build; \

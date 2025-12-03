@@ -29,7 +29,7 @@ export default async function handler(
       success: true,
       count,
       files:
-        files?.map((f) => ({
+        files?.map((f: any) => ({
           name: f.name,
           size: f.metadata?.size,
           created_at: f.created_at,

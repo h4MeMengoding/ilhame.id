@@ -215,7 +215,9 @@ export const cleanupAllTempImages = async (): Promise<number> => {
       return 0;
     }
 
-    const filesToDelete: string[] = files.map((file) => `temp/${file.name}`);
+    const filesToDelete: string[] = files.map(
+      (file: any) => `temp/${file.name}`,
+    );
 
     if (filesToDelete.length > 0) {
       const { error: deleteError } = await supabase.storage
