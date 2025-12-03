@@ -7,22 +7,10 @@ const nextConfig = {
   // Performance optimizations
   experimental: {
     optimizeCss: true,
-    legacyBrowsers: false,
-    browsersListForSwc: true,
     // Enable incremental cache for faster builds
     incrementalCacheHandlerPath: undefined,
     // Skip validation for faster builds in production
     isrMemoryCacheSize: 0,
-    // Disable font optimization during build to prevent timeout issues
-    fontLoaders: [
-      {
-        loader: '@next/font/google',
-        options: {
-          subsets: ['latin'],
-          display: 'swap',
-        },
-      },
-    ],
   },
 
   // Disable source maps in production for faster builds

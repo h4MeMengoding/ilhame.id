@@ -29,11 +29,11 @@ RUN npx prisma generate
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Increase timeout for font downloads
-ENV NEXT_FONT_GOOGLE_TIMEOUT=30000
-
 # Optimize build with more memory and parallel processing
 ENV NODE_OPTIONS="--max-old-space-size=4096"
+
+# Skip font optimization to prevent network timeout during build
+ENV NEXT_FONT_GOOGLE_MUTE_ERRORS=1
 
 RUN \
   if [ -f yarn.lock ]; then yarn build; \
