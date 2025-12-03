@@ -10,8 +10,8 @@ WORKDIR /app
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* ./
 RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile --network-timeout 100000; \
-  elif [ -f package-lock.json ]; then npm ci --ignore-scripts --prefer-offline --no-audit; \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci --ignore-scripts; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
@@ -29,12 +29,10 @@ RUN npx prisma generate
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Optimize build with more memory and parallel processing
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+# Increase timeout for font downloads
+ENV NEXT_FONT_GOOGLE_TIMEOUT=30000
 
-# Skip font optimization to prevent network timeout during build
-ENV NEXT_FONT_GOOGLE_MUTE_ERRORS=1
-
+# Build with Turborepo for faster builds and caching
 RUN \
   if [ -f yarn.lock ]; then yarn build; \
   elif [ -f package-lock.json ]; then npm run build; \

@@ -2,11 +2,12 @@
   "name": "hame.my.id",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "yarn@1.22.22",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "build:fast": "NEXT_TELEMETRY_DISABLED=1 NODE_OPTIONS='--max-old-space-size=4096' next build",
-    "postbuild": "next-sitemap",
+    "build": "turbo build:next && next-sitemap",
+    "build:next": "next build",
+    "postbuild": "echo Build completed",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "eslint src --fix && yarn format",
@@ -17,9 +18,7 @@
     "test": "jest",
     "test:ci": "jest --ci",
     "prepare": "husky install",
-    "postinstall": "prisma generate",
-    "docker:build": "docker build --build-arg NODE_ENV=production -t ilhame-id .",
-    "docker:build:nocache": "docker build --no-cache --build-arg NODE_ENV=production -t ilhame-id ."
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.19",
@@ -115,6 +114,7 @@
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwindcss": "3.3.2",
+    "turbo": "^2.6.1",
     "typescript": "5.0.4"
   },
   "lint-staged": {

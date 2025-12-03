@@ -16,7 +16,6 @@ import Layout from '@/common/components/layouts';
 import { AuthProvider } from '@/common/context/AuthContext';
 import { CommandPaletteProvider } from '@/common/context/CommandPaletteContext';
 import { jakartaSans } from '@/common/styles/fonts';
-import Head from 'next/head';
 
 import defaultSEOConfig from '../../next-seo.config';
 
@@ -35,18 +34,6 @@ const App = ({ Component, pageProps }: AppProps) => {
 
   return (
     <>
-      <Head>
-        <link rel='preconnect' href='https://fonts.googleapis.com' />
-        <link
-          rel='preconnect'
-          href='https://fonts.gstatic.com'
-          crossOrigin='anonymous'
-        />
-        <link
-          href='https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap'
-          rel='stylesheet'
-        />
-      </Head>
       <style jsx global>
         {`
           html {
