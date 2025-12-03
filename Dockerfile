@@ -50,6 +50,9 @@ ENV NEXT_PUBLIC_FIREBASE_APP_ID="1:123456789:web:placeholder"
 ENV NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="G-PLACEHOLDER"
 ENV NEXT_PUBLIC_FIREBASE_CHAT_DB="messages"
 
+# Skip database-dependent static generation during build
+ENV SKIP_BUILD_STATIC_GENERATION="true"
+
 # Build with Turborepo for faster builds and caching
 RUN \
   if [ -f yarn.lock ]; then yarn build; \

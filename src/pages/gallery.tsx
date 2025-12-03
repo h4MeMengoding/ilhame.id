@@ -154,6 +154,16 @@ export default function GalleryPage({ initialGalleryItems }: GalleryPageProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
+  // Skip database access during Docker build
+  if (process.env.SKIP_BUILD_STATIC_GENERATION === 'true') {
+    return {
+      props: {
+        initialGalleryItems: [],
+      },
+      revalidate: 60,
+    };
+  }
+
   try {
     // Fetch gallery data directly from the database on the server
     const { PrismaClient } = await import('@prisma/client');

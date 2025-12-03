@@ -40,6 +40,16 @@ const ProjectsPage: NextPage<ProjectsPageProps> = ({ projects }) => {
 export default ProjectsPage;
 
 export const getStaticProps: GetStaticProps = async () => {
+  // Skip database access during Docker build
+  if (process.env.SKIP_BUILD_STATIC_GENERATION === 'true') {
+    return {
+      props: {
+        projects: [],
+      },
+      revalidate: 60,
+    };
+  }
+
   const response = await prisma.projects.findMany({
     orderBy: [
       {

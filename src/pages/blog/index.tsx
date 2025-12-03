@@ -23,6 +23,25 @@ const BlogPage: NextPage<BlogPageProps> = ({ initialBlogData }) => {
 
 // Pre-fetch first page of blog posts
 export const getStaticProps: GetStaticProps = async () => {
+  // Skip database access during Docker build
+  if (process.env.SKIP_BUILD_STATIC_GENERATION === 'true') {
+    return {
+      props: {
+        initialBlogData: {
+          status: false,
+          data: {
+            posts: [],
+            total_pages: 0,
+            total_posts: 0,
+            page: 1,
+            per_page: 6,
+          },
+        },
+      },
+      revalidate: 60,
+    };
+  }
+
   try {
     const { PrismaClient } = await import('@prisma/client');
     const prisma = new PrismaClient();
