@@ -15,7 +15,6 @@ import CommandPalette from '@/common/components/elements/CommandPalette';
 import Layout from '@/common/components/layouts';
 import { AuthProvider } from '@/common/context/AuthContext';
 import { CommandPaletteProvider } from '@/common/context/CommandPaletteContext';
-import { jakartaSans } from '@/common/styles/fonts';
 
 import defaultSEOConfig from '../../next-seo.config';
 
@@ -37,7 +36,13 @@ const App = ({ Component, pageProps }: AppProps) => {
       <style jsx global>
         {`
           html {
-            --jakartaSans-font: ${jakartaSans.style.fontFamily};
+            font-family: 'Plus Jakarta Sans',
+              var(
+                --font-family-sans-serif,
+                system-ui,
+                -apple-system,
+                sans-serif
+              );
           }
         `}
       </style>
