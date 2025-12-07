@@ -8,7 +8,6 @@ import {
   BiSearch as SearchIcon,
   BiSun as LightModeIcon,
 } from 'react-icons/bi';
-import { HiOutlineChat as AiIcon } from 'react-icons/hi';
 import { useDebounce } from 'usehooks-ts';
 
 import {
@@ -19,10 +18,7 @@ import {
 import { CommandPaletteContext } from '@/common/context/CommandPaletteContext';
 import useIsMobile from '@/common/hooks/useIsMobile';
 import { MenuItemProps } from '@/common/types/menu';
-import AiLoading from '@/modules/cmdpallete/components/AiLoading';
-import AiResponses from '@/modules/cmdpallete/components/AiResponses';
 import QueryNotFound from '@/modules/cmdpallete/components/QueryNotFound';
-import { sendMessage } from '@/services/chatgpt';
 
 interface MenuOptionItemProps extends MenuItemProps {
   click?: () => void;
@@ -38,10 +34,6 @@ const CommandPalette = () => {
   const [query, setQuery] = useState('');
   const [isEmptyState, setEmptyState] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [askAssistantClicked, setAskAssistantClicked] = useState(false);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiResponse, setAiResponse] = useState('');
-  const [aiFinished, setAiFinished] = useState(false);
 
   const router = useRouter();
   const isMobile = useIsMobile();
@@ -130,23 +122,6 @@ const CommandPalette = () => {
     window.open(url, '_blank');
   };
 
-  const handleAskAiAssistant = async () => {
-    setEmptyState(true);
-    setAskAssistantClicked(true);
-    setAiLoading(true);
-
-    const response = await sendMessage(queryDebounce);
-
-    setAiResponse(response);
-    setAiLoading(false);
-  };
-
-  const handleAiClose = () => {
-    setAskAssistantClicked(false);
-    setAiResponse('');
-    setAiFinished(false);
-  };
-
   const isActiveRoute = (href: string) => {
     return router.pathname === href;
   };
@@ -171,7 +146,6 @@ const CommandPalette = () => {
     if (!isOpen) {
       setQuery('');
       setEmptyState(false);
-      handleAiClose();
     }
   }, [isOpen]);
 
@@ -188,12 +162,6 @@ const CommandPalette = () => {
 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, setIsOpen]);
-
-  useEffect(() => {
-    if (aiResponse?.includes('```')) {
-      setAiFinished(true);
-    }
-  }, [aiResponse]);
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -227,20 +195,13 @@ const CommandPalette = () => {
               onChange={(menu: MenuOptionItemProps) => handleSelect(menu)}
               as='div'
               className='shadow-3xl relative mx-auto max-w-xl overflow-hidden rounded-xl border-2 border-neutral-100 bg-white ring-1 ring-black/5 backdrop-blur dark:divide-neutral-600 dark:border-neutral-800 dark:bg-[#1b1b1b80]'
-              disabled={askAssistantClicked}
             >
               <div className='flex items-center gap-3 border-b border-neutral-300 px-4 dark:border-neutral-800'>
-                {askAssistantClicked ? (
-                  <AiIcon size={22} />
-                ) : (
-                  <SearchIcon size={22} />
-                )}
+                <SearchIcon size={22} />
                 <Combobox.Input
                   onChange={handleSearch}
                   className='h-14 w-full border-0 bg-transparent  text-neutral-800 placeholder-neutral-500 focus:outline-none focus:ring-0 dark:text-neutral-200'
-                  placeholder={
-                    askAssistantClicked ? queryDebounce : placeholder
-                  }
+                  placeholder={placeholder}
                 />
               </div>
 
@@ -315,35 +276,14 @@ const CommandPalette = () => {
               </div>
 
               {!isEmptyState &&
-                !askAssistantClicked &&
                 queryDebounce &&
                 filterMenuOptions.every(
                   (item) => item.children.length === 0,
                 ) && (
                   <QueryNotFound
                     query={queryDebounce}
-                    onAskAiAssistant={handleAskAiAssistant}
                     onFindGoogle={handleFindGoogle}
                   />
-                )}
-
-              {askAssistantClicked &&
-                queryDebounce &&
-                filterMenuOptions.every(
-                  (item) => item.children.length === 0,
-                ) && (
-                  <div className='max-h-80 overflow-y-auto px-8 py-7 text-neutral-700 dark:text-neutral-300'>
-                    {aiLoading ? (
-                      <AiLoading />
-                    ) : (
-                      <AiResponses
-                        response={aiResponse}
-                        isAiFinished={aiFinished}
-                        onAiFinished={() => setAiFinished(true)}
-                        onAiClose={handleAiClose}
-                      />
-                    )}
-                  </div>
                 )}
             </Combobox>
           </Transition.Child>
