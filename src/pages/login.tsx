@@ -17,6 +17,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileError, setTurnstileError] = useState(false);
+  const [turnstileKey, setTurnstileKey] = useState(0);
   const { login } = useAuth();
   const router = useRouter();
 
@@ -50,15 +51,17 @@ const LoginPage = () => {
         router.push('/dashboard');
       } else {
         toast.error('Invalid email or password');
-        // Reset CAPTCHA on failed login
+        // Reset CAPTCHA on failed login by remounting the widget
         setTurnstileToken(null);
         setTurnstileError(false);
+        setTurnstileKey((prev) => prev + 1);
       }
     } catch (error: any) {
       toast.error(error.message || 'Login failed');
-      // Reset CAPTCHA on error
+      // Reset CAPTCHA on error by remounting the widget
       setTurnstileToken(null);
       setTurnstileError(false);
+      setTurnstileKey((prev) => prev + 1);
     } finally {
       setIsLoading(false);
     }
@@ -140,6 +143,7 @@ const LoginPage = () => {
               {/* Turnstile CAPTCHA */}
               <div className='space-y-2'>
                 <TurnstileWidget
+                  key={turnstileKey}
                   onSuccess={handleTurnstileSuccess}
                   onError={handleTurnstileError}
                   onExpire={handleTurnstileExpire}

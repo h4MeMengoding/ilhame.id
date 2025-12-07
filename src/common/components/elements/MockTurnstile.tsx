@@ -17,6 +17,10 @@ const MockTurnstile = ({
   const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
+    // Reset states when component remounts
+    setIsLoading(true);
+    setIsCompleted(false);
+
     // Simulate loading
     const loadTimer = setTimeout(() => {
       setIsLoading(false);
