@@ -21,7 +21,7 @@ Disallow: /learn
 Disallow: /playground
 
 # Host
-Host: localhost:3000
+Host: https://ilhame.id
 
 # Sitemaps
-Sitemap: localhost:3000/sitemap.xml
+Sitemap: https://ilhame.id/sitemap.xml

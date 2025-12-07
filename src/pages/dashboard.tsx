@@ -8,7 +8,7 @@ import Dashboard from '@/modules/dashboard';
 
 const PAGE_TITLE = 'Dashboard';
 const PAGE_DESCRIPTION =
-  'Manage your projects and URL shortener from one place.';
+  'Manage your projects, blogs, and gallery from one place.';
 
 const DashboardPage: NextPage = () => {
   return (

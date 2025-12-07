@@ -1,20 +1,13 @@
 import Image from 'next/image';
-import {
-  FiEdit3,
-  FiFolder,
-  FiImage,
-  FiLink2,
-  FiLogOut,
-  FiUser,
-} from 'react-icons/fi';
+import { FiEdit3, FiFolder, FiImage, FiLogOut, FiUser } from 'react-icons/fi';
 
 import Card from '@/common/components/elements/Card';
 import { useAuth } from '@/common/context/AuthContext';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  activeTab: 'urls' | 'projects' | 'blogs' | 'gallery';
-  onTabChange: (tab: 'urls' | 'projects' | 'blogs' | 'gallery') => void;
+  activeTab: 'projects' | 'blogs' | 'gallery';
+  onTabChange: (tab: 'projects' | 'blogs' | 'gallery') => void;
 }
 
 const DashboardLayout = ({
@@ -30,33 +23,23 @@ const DashboardLayout = ({
 
   const menuItems = [
     {
-      id: 'urls' as const,
-      label: 'URL Shortener',
-      icon: <FiLink2 className='h-5 w-5' />,
-      description: 'Manage your short URLs',
+      id: 'projects' as const,
+      label: 'Projects',
+      icon: <FiFolder className='h-5 w-5' />,
+      description: 'Manage your projects',
     },
-    ...(user?.role === 'admin'
-      ? [
-          {
-            id: 'projects' as const,
-            label: 'Projects',
-            icon: <FiFolder className='h-5 w-5' />,
-            description: 'Manage your projects',
-          },
-          {
-            id: 'blogs' as const,
-            label: 'Blog Posts',
-            icon: <FiEdit3 className='h-5 w-5' />,
-            description: 'Manage blog posts',
-          },
-          {
-            id: 'gallery' as const,
-            label: 'Gallery',
-            icon: <FiImage className='h-5 w-5' />,
-            description: 'Manage photo gallery',
-          },
-        ]
-      : []),
+    {
+      id: 'blogs' as const,
+      label: 'Blog Posts',
+      icon: <FiEdit3 className='h-5 w-5' />,
+      description: 'Manage blog posts',
+    },
+    {
+      id: 'gallery' as const,
+      label: 'Gallery',
+      icon: <FiImage className='h-5 w-5' />,
+      description: 'Manage photo gallery',
+    },
   ];
 
   return (
@@ -98,7 +81,7 @@ const DashboardLayout = ({
                 <span className='block sm:inline'>
                   {user?.role === 'admin'
                     ? 'Full access to all features'
-                    : 'URL shortener access'}
+                    : 'Limited access'}
                 </span>
               </p>
             </div>

@@ -92,7 +92,7 @@ const LoginPage = () => {
                 Login to Dashboard
               </h2>
               <p className='mt-2 text-sm text-gray-600 dark:text-gray-400'>
-                Access your URL shortener and projects management
+                Access your dashboard and content management
               </p>
             </div>
 

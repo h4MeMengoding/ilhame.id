@@ -1,11 +1,69 @@
 generator client {
-  provider     = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider     = "postgresql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
+}
+
+model Blog {
+  id                 Int       @id @default(autoincrement())
+  title              String
+  slug               String    @unique
+  content            String    @db.Text
+  excerpt            String?   @db.Text
+  featured_image_url String?
+  status             String    @default("draft")
+  author_id          Int
+  author             User      @relation(fields: [author_id], references: [id])
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @default(now())
+  published_at       DateTime?
+  is_featured        Boolean   @default(false)
+  comments           Comment[]
+
+  @@map("blogs")
+}
+
+model Comment {
+  id          Int       @id @default(autoincrement())
+  content     String    @db.Text
+  blog_id     Int
+  blog        Blog      @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+  user_id     Int
+  user        User      @relation(fields: [user_id], references: [id])
+  parent_id   Int?
+  parent      Comment?  @relation("CommentReplies", fields: [parent_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  replies     Comment[] @relation("CommentReplies")
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @default(now())
+  is_approved Boolean   @default(true)
+
+  @@map("comments")
+}
+
+model contentmeta {
+  id         Int      @id @default(autoincrement())
+  slug       String   @unique
+  type       String
+  views      Int      @default(0)
+  updated_at DateTime @default(now())
+}
+
+model Gallery {
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String?  @db.Text
+  image_url    String
+  category     String?
+  is_featured  Boolean  @default(false)
+  is_published Boolean  @default(true)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now())
+
+  @@map("gallery")
 }
 
 model projects {
@@ -19,97 +77,22 @@ model projects {
   stacks      String
   is_show     Boolean  @default(true)
   updated_at  DateTime @default(now())
-  content     String?  @db.Text
+  content     String?
   is_featured Boolean  @default(false)
-}
-
-model contentmeta {
-  id          Int      @id @default(autoincrement())
-  slug        String   @unique
-  type        String
-  views       Int      @default(0)
-  updated_at  DateTime @default(now())
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  email       String   @unique
-  password    String
-  name        String?
-  avatar_url  String?
-  role        String   @default("user")
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
-  is_active   Boolean  @default(true)
-  blogs       Blog[]
-  comments    Comment[]
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  password   String
+  name       String?
+  avatar_url String?
+  role       String    @default("user")
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
+  is_active  Boolean   @default(true)
+  blogs      Blog[]
+  comments   Comment[]
 
   @@map("users")
-}
-
-model ShortUrl {
-  id          Int      @id @default(autoincrement())
-  slug        String   @unique
-  original_url String  @db.Text
-  title       String?
-  description String?
-  clicks      Int      @default(0)
-  user_id     String?
-  user_email  String?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
-  expires_at  DateTime?
-  is_active   Boolean  @default(true)
-
-  @@map("shorturls")
-}
-
-model Blog {
-  id          Int      @id @default(autoincrement())
-  title       String
-  slug        String   @unique
-  content     String   @db.Text
-  excerpt     String?  @db.Text
-  featured_image_url String?
-  status      String   @default("draft") // draft, published
-  author_id   Int
-  author      User     @relation(fields: [author_id], references: [id])
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
-  published_at DateTime?
-  is_featured Boolean  @default(false)
-  comments    Comment[]
-
-  @@map("blogs")
-}
-
-model Comment {
-  id          Int      @id @default(autoincrement())
-  content     String   @db.Text
-  blog_id     Int
-  blog        Blog     @relation(fields: [blog_id], references: [id], onDelete: Cascade)
-  user_id     Int
-  user        User     @relation(fields: [user_id], references: [id])
-  parent_id   Int?     // For nested comments/replies
-  parent      Comment? @relation("CommentReplies", fields: [parent_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  replies     Comment[] @relation("CommentReplies")
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
-  is_approved Boolean  @default(true)
-
-  @@map("comments")
-}
-
-model Gallery {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?  @db.Text
-  image_url   String
-  category    String?
-  is_featured Boolean  @default(false)
-  is_published Boolean @default(true)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
-
-  @@map("gallery")
 }
