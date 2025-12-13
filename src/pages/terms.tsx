@@ -1,10 +1,10 @@
 import { NextPage } from 'next';
+import Link from 'next/link';
 import { NextSeo } from 'next-seo';
 
 import Container from '@/common/components/elements/Container';
 
 const PAGE_TITLE = 'Terms of Service';
-const PAGE_DESCRIPTION = 'Terms and conditions for using ilhame.id services.';
 
 const TermsPage: NextPage = () => {
   return (
@@ -50,12 +50,12 @@ const TermsPage: NextPage = () => {
                 By creating an account, accessing, or using any part of our
                 Service, you acknowledge that you have read, understood, and
                 agree to be bound by these Terms, as well as our{' '}
-                <a
+                <Link
                   href='/privacy'
                   className='text-blue-600 hover:underline dark:text-blue-400'
                 >
                   Privacy Policy
-                </a>
+                </Link>
                 .
               </p>
               <p>
@@ -640,12 +640,12 @@ const TermsPage: NextPage = () => {
               <ul className='space-y-2'>
                 <li>
                   <strong>Through our contact form:</strong>{' '}
-                  <a
+                  <Link
                     href='/contact'
                     className='text-blue-600 hover:underline dark:text-blue-400'
                   >
                     ilhame.id/contact
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <strong>Website:</strong>{' '}

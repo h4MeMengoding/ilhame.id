@@ -1,12 +1,10 @@
 import { NextPage } from 'next';
+import Link from 'next/link';
 import { NextSeo } from 'next-seo';
 
 import Container from '@/common/components/elements/Container';
-import PageHeading from '@/common/components/elements/PageHeading';
 
 const PAGE_TITLE = 'Privacy Policy';
-const PAGE_DESCRIPTION =
-  'Information about how we collect, use, and protect your data.';
 
 const PrivacyPage: NextPage = () => {
   return (
@@ -478,12 +476,12 @@ const PrivacyPage: NextPage = () => {
               <ul className='space-y-2'>
                 <li>
                   <strong>Through our contact form:</strong>{' '}
-                  <a
+                  <Link
                     href='/contact'
                     className='text-blue-600 hover:underline dark:text-blue-400'
                   >
                     ilhame.id/contact
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <strong>Website:</strong>{' '}
