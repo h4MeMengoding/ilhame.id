@@ -1,9 +1,5 @@
 {
   "functions": {
-    "src/pages/api/chat.ts": {
-      "memory": 1024,
-      "maxDuration": 10
-    },
     "src/pages/s/[slug].tsx": {
       "memory": 256,
       "maxDuration": 8

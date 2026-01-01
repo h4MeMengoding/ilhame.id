@@ -25,7 +25,6 @@ module.exports = {
     await config.transform(config, '/projects'),
     await config.transform(config, '/contact'),
     await config.transform(config, '/status'),
-    await config.transform(config, '/guestbook'),
     await config.transform(config, '/gallery'),
   ],
   robotsTxtOptions: {
