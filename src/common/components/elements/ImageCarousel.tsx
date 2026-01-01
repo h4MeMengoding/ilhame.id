@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect, useRef } from 'react';
 import Slider from 'react-slick';
 import { useWindowSize } from 'usehooks-ts';

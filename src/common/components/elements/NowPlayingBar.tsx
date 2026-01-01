@@ -48,7 +48,7 @@ const NowPlayingBar = () => {
             >
               <div className='flex items-center gap-2'>
                 <AnimatedBars />
-                <div className='hidden sm:block '>Sedang mendengarkan :</div>
+                <div className='hidden sm:block'>Sedang mendengarkan :</div>
                 <div className='flex items-center gap-2 transition-all duration-300'>
                   {playingData?.albumImageUrl && (
                     <Image

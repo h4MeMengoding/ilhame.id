@@ -67,7 +67,7 @@ const ProjectCardHome = ({
 
           <div className='flex flex-col justify-end'>
             <div className='flex flex-col space-y-3'>
-              <h3 className=' text-lg font-medium text-neutral-100 group-hover:underline group-hover:underline-offset-4 '>
+              <h3 className='text-lg font-medium text-neutral-100 group-hover:underline group-hover:underline-offset-4'>
                 {title}
               </h3>
               <p className='text-sm leading-relaxed text-neutral-400'>
@@ -92,7 +92,7 @@ const ProjectCardHome = ({
                 initial='visible'
                 animate={isHovered ? 'hidden' : 'visible'}
                 className={clsx(
-                  'flex justify-between gap-4 ',
+                  'flex justify-between gap-4',
                   isHovered && 'hidden',
                 )}
               >

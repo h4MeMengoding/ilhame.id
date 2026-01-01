@@ -18,8 +18,9 @@ const BlogCarousel = () => {
     return data?.data?.posts || [];
   }, [data]);
 
-  const ref =
-    useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
+  const ref = useRef<HTMLDivElement>(
+    null,
+  ) as React.MutableRefObject<HTMLInputElement>;
   const { events } = useDraggable(ref);
 
   const renderBlogCards = () => {

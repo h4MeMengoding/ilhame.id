@@ -58,7 +58,7 @@ const ImageModal = ({ item, isOpen, onClose }: ImageModalProps) => {
           </div>
 
           {/* Details Panel */}
-          <div className='lg:min-w-80 w-full border-t border-neutral-200 p-4 dark:border-neutral-700 lg:max-h-[95vh] lg:w-80 lg:overflow-y-auto lg:border-l lg:border-t-0 lg:p-6'>
+          <div className='w-full border-t border-neutral-200 p-4 dark:border-neutral-700 lg:max-h-[95vh] lg:w-80 lg:min-w-80 lg:overflow-y-auto lg:border-l lg:border-t-0 lg:p-6'>
             <div className='mb-4 flex items-start justify-between'>
               <h2 className='text-xl font-bold text-neutral-900 dark:text-white'>
                 {item.title}

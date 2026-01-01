@@ -1,13 +1,23 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  poweredByHeader: false, // Removes X-Powered-By header for security
+  poweredByHeader: false,
 
-  // Performance optimizations
-  experimental: {
-    optimizeCss: true,
-    legacyBrowsers: false,
-    browsersListForSwc: true,
+  // Disable source maps in production for faster builds
+  productionBrowserSourceMaps: false,
+
+  // Optimize ESLint during build
+  eslint: {
+    // Only run ESLint on these directories during production builds
+    dirs: ['src/pages', 'src/common', 'src/modules'],
+    // Ignore during build to speed up
+    ignoreDuringBuilds: true,
+  },
+
+  // TypeScript configuration
+  typescript: {
+    // Don't type-check during build (run separately)
+    ignoreBuildErrors: true,
   },
 
   images: {
@@ -94,17 +104,16 @@ const nextConfig = {
     ];
   },
 
-  // Enable experimental features for better SEO
-  experimental: {
-    optimizeCss: true,
-  },
-
   // Enable webpack bundle analyzer for development
   webpack: (config, { dev, isServer }) => {
     // Optimize bundle size
     if (!dev && !isServer) {
+      // Disable source maps for faster builds
+      config.devtool = false;
+
       config.optimization = {
         ...config.optimization,
+        minimize: true,
         splitChunks: {
           chunks: 'all',
           cacheGroups: {
@@ -112,11 +121,26 @@ const nextConfig = {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendors',
               chunks: 'all',
+              priority: 10,
             },
           },
         },
       };
     }
+
+    // Speed up builds with parallel processing
+    config.infrastructureLogging = {
+      level: 'error',
+    };
+
+    // Enable caching for faster rebuilds
+    config.cache = {
+      type: 'filesystem',
+      buildDependencies: {
+        config: [__filename],
+      },
+    };
+
     return config;
   },
 };

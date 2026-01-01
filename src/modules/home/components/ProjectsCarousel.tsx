@@ -24,8 +24,9 @@ const ProjectsCarousel = () => {
     return filteredProjects.slice(0, 4);
   }, [data]);
 
-  const ref =
-    useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
+  const ref = useRef<HTMLDivElement>(
+    null,
+  ) as React.MutableRefObject<HTMLInputElement>;
   const { events } = useDraggable(ref);
 
   const renderProjectCards = () => {

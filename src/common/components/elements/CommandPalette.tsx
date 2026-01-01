@@ -178,7 +178,7 @@ const CommandPalette = () => {
           leaveFrom='opacity-100'
           leaveTo='opacity-0'
         >
-          <Dialog.Overlay className='fixed inset-0 bg-neutral-600/90 dark:bg-neutral-900/90' />
+          <div className='fixed inset-0 bg-neutral-600/90 dark:bg-neutral-900/90' />
         </Transition.Child>
 
         <Dialog.Panel>
@@ -192,7 +192,9 @@ const CommandPalette = () => {
             leaveTo='opacity-0 scale-95'
           >
             <Combobox
-              onChange={(menu: MenuOptionItemProps) => handleSelect(menu)}
+              onChange={(menu: MenuOptionItemProps | null) =>
+                menu && handleSelect(menu)
+              }
               as='div'
               className='shadow-3xl relative mx-auto max-w-xl overflow-hidden rounded-xl border-2 border-neutral-100 bg-white ring-1 ring-black/5 backdrop-blur dark:divide-neutral-600 dark:border-neutral-800 dark:bg-[#1b1b1b80]'
             >
@@ -200,7 +202,7 @@ const CommandPalette = () => {
                 <SearchIcon size={22} />
                 <Combobox.Input
                   onChange={handleSearch}
-                  className='h-14 w-full border-0 bg-transparent  text-neutral-800 placeholder-neutral-500 focus:outline-none focus:ring-0 dark:text-neutral-200'
+                  className='h-14 w-full border-0 bg-transparent text-neutral-800 placeholder-neutral-500 focus:outline-none focus:ring-0 dark:text-neutral-200'
                   placeholder={placeholder}
                 />
               </div>
@@ -253,13 +255,13 @@ const CommandPalette = () => {
                               </div>
                               <>
                                 {isActiveRoute(child?.href) ? (
-                                  <span className='animate-pulse  text-xs text-neutral-500'>
+                                  <span className='animate-pulse text-xs text-neutral-500'>
                                     Now
                                   </span>
                                 ) : (
                                   <>
                                     {child?.type && (
-                                      <div className='rounded-md border border-neutral-400 px-1.5 py-0.5  text-xs text-neutral-500 dark:border-neutral-500'>
+                                      <div className='rounded-md border border-neutral-400 px-1.5 py-0.5 text-xs text-neutral-500 dark:border-neutral-500'>
                                         {child?.type}
                                       </div>
                                     )}

@@ -71,7 +71,7 @@ const BlogDetail = ({
           </div>
         )}
 
-      <div className='space-y-6 leading-[1.8] dark:text-neutral-300 '>
+      <div className='space-y-6 leading-[1.8] dark:text-neutral-300'>
         {content?.rendered && (
           <>
             {/* Check if content is HTML (contains HTML tags) or markdown */}

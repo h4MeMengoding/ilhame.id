@@ -134,9 +134,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
       // If project had an image, delete it from storage
       if (project?.image) {
         try {
-          const { deleteProjectImageByUrl } = await import(
-            '@/services/imageUpload'
-          );
+          const { deleteProjectImageByUrl } =
+            await import('@/services/imageUpload');
           await deleteProjectImageByUrl(project.image);
         } catch (error) {
           // Silently handle storage deletion errors

@@ -15,17 +15,14 @@ CLOUDFLARE_TURNSTILE_SECRET_KEY=your_secret_key_here
 ### Cara Mendapatkan Kunci Turnstile:
 
 1. **Buka Cloudflare Dashboard**
-
    - Login ke [Cloudflare Dashboard](https://dash.cloudflare.com/)
    - Pilih akun Anda
 
 2. **Akses Turnstile**
-
    - Di sidebar, pilih "Turnstile"
    - Atau akses langsung: https://dash.cloudflare.com/?to=/:account/turnstile
 
 3. **Buat Site Baru**
-
    - Klik "Add Site"
    - Masukkan nama site (contoh: "MyWebsite Login")
    - Masukkan domain website Anda
@@ -149,7 +146,6 @@ const MyForm = () => {
    ```
 
 3. **Theme tidak sesuai**
-
    - Pastikan `next-themes` sudah dikonfigurasi
    - Component akan fallback ke light mode jika theme tidak terdeteksi
 
@@ -184,18 +180,15 @@ CLOUDFLARE_TURNSTILE_SECRET_KEY=0x4BBBBBBB...  # production secret
 Untuk kemudahan development di localhost, sistem akan otomatis:
 
 1. **Auto-detect Development**
-
    - Mendeteksi `NODE_ENV=development`
    - Mendeteksi hostname `localhost` atau `127.0.0.1`
 
 2. **Mock CAPTCHA Widget**
-
    - Tampilan visual mock CAPTCHA
    - Tombol "Mock Verify" untuk simulasi
    - Visual indicator "DEVELOPMENT MODE"
 
 3. **Backend Mock Verification**
-
    - Menerima token mock `dev-mock-token-*`
    - Bypass verifikasi Cloudflare API
    - Console log untuk debugging

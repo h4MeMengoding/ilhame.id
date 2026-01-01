@@ -47,7 +47,7 @@ const LearnCard = ({
         <div className='flex flex-col justify-between space-y-3 p-5'>
           <div className='space-y-2'>
             <div className='flex justify-between'>
-              <div className='cursor-pointer  text-lg text-neutral-700 transition-all duration-300 dark:text-neutral-300 dark:group-hover:text-teal-400 lg:group-hover:text-teal-600'>
+              <div className='cursor-pointer text-lg text-neutral-700 transition-all duration-300 dark:text-neutral-300 dark:group-hover:text-teal-400 lg:group-hover:text-teal-600'>
                 {title}
               </div>
             </div>

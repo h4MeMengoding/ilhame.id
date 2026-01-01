@@ -93,7 +93,8 @@ const RichTextEditor = ({
           border-top: none;
           border-radius: 0 0 0.5rem 0.5rem;
           background: #ffffff;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          font-family:
+            -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
             'Helvetica Neue', Arial, sans-serif;
           font-size: 14px;
         }

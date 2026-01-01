@@ -9,7 +9,7 @@ interface QueryNotFoundProps {
 
 const QueryNotFound = ({ query, onFindGoogle }: QueryNotFoundProps) => {
   return (
-    <div className='flex flex-col items-center space-y-6 px-5 pb-10 pt-5 '>
+    <div className='flex flex-col items-center space-y-6 px-5 pb-10 pt-5'>
       <div className='space-y-2 text-center text-neutral-500'>
         <p>
           No results for

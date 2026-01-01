@@ -24,12 +24,12 @@ const ProfileHeader = ({ expandMenu, imageSize }: ProfileHeaderProps) => {
         width={expandMenu ? 80 : imageSize}
         height={expandMenu ? 80 : imageSize}
         rounded='rounded-full'
-        className=' dark:border-neutral-600 lg:hover:scale-105'
+        className='dark:border-neutral-600 lg:hover:scale-105'
       />
       <>
         <div className='mt-1 flex items-center gap-2 lg:mt-4'>
           <Link href='/' passHref>
-            <h2 className='flex-grow  text-lg font-medium lg:text-xl'>
+            <h2 className='flex-grow text-lg font-medium lg:text-xl'>
               Ilham Shofa
             </h2>
           </Link>

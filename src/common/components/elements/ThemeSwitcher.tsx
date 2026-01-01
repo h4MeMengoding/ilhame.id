@@ -18,7 +18,7 @@ const ThemeSwitcher = () => {
 
   return (
     <Listbox>
-      <div className='relative mt-1 '>
+      <div className='relative mt-1'>
         <Listbox.Button className='group relative w-full cursor-pointer rounded-lg border-[1.8px] bg-white py-2 pl-4 pr-10 text-left text-neutral-600 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400 sm:text-[15px]'>
           <span className='flex items-center gap-2 truncate'>
             {resolvedTheme === 'dark' ? (

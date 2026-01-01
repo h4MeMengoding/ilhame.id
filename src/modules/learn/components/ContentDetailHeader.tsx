@@ -31,7 +31,7 @@ const ContentDetailHeader = ({
     };
   }, []);
 
-  const transition = { duration: 0.3, ease: 'easeInOut' };
+  const transition = { duration: 0.3, ease: 'easeInOut' as const };
   const titleVariants = {
     initial: { opacity: 0, y: -20 },
     animate: { opacity: 1, y: 0 },
@@ -65,7 +65,7 @@ const ContentDetailHeader = ({
         <div className='mt-1 flex items-center gap-4'>
           {source && source_url && (
             <Link href={source_url} target='_blank' passHref>
-              <div className='flex items-center gap-2 font-medium text-neutral-700 dark:text-neutral-300 '>
+              <div className='flex items-center gap-2 font-medium text-neutral-700 dark:text-neutral-300'>
                 <LinkIcon size={18} />
                 <span className='text-[15px] transition-all duration-300 dark:text-teal-500 hover:dark:text-teal-400'>
                   View in {source}
