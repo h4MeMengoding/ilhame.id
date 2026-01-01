@@ -16,21 +16,30 @@ const Services = () => {
           explored together.
         </p>
       </div>
-      <Card className='space-y-4 rounded-xl border bg-neutral-100 p-8 dark:border-none dark:bg-[#1e1e1e]'>
-        <div className='flex items-center gap-2'>
-          <TbListDetails size={24} />
-          <h3 className='text-xl font-medium'>Open my about page!</h3>
+      <Card className='relative overflow-hidden rounded-3xl border-none bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 p-8 shadow-xl'>
+        {/* Animated background orbs */}
+        <div className='absolute -left-20 -top-20 h-64 w-64 animate-pulse rounded-full bg-gradient-to-br from-purple-600 to-pink-600 opacity-10 blur-3xl'></div>
+        <div
+          className='absolute -bottom-20 -right-20 h-72 w-72 animate-pulse rounded-full bg-gradient-to-br from-blue-600 to-cyan-600 opacity-10 blur-3xl'
+          style={{ animationDelay: '1s', animationDuration: '4s' }}
+        ></div>
+
+        <div className='relative z-10 space-y-4'>
+          <div className='flex items-center gap-2 text-white'>
+            <TbListDetails size={24} />
+            <h3 className='text-xl font-medium'>Open my about page!</h3>
+          </div>
+          <p className='pl-2 leading-[1.8] text-neutral-200 md:leading-loose'>
+            I provide my Resume, Experience, Education, and Introduction in
+            detail on that page.
+          </p>
+          <Button
+            data-umami-event='Klik Tombol Tentang'
+            onClick={() => Router.push('/about')}
+          >
+            Resume
+          </Button>
         </div>
-        <p className='pl-2 leading-[1.8] text-neutral-800 dark:text-neutral-300 md:leading-loose'>
-          I provide my Resume, Experience, Education, and Introduction in detail
-          on that page.
-        </p>
-        <Button
-          data-umami-event='Klik Tombol Tentang'
-          onClick={() => Router.push('/about')}
-        >
-          Resume
-        </Button>
       </Card>
     </section>
   );

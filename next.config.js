@@ -3,6 +3,9 @@ const nextConfig = {
   swcMinify: true,
   poweredByHeader: false,
 
+  // Transpile specific packages to fix module issues
+  transpilePackages: ['date-fns', 'date-fns-tz'],
+
   // Disable source maps in production for faster builds
   productionBrowserSourceMaps: false,
 
