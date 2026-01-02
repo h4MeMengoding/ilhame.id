@@ -12,6 +12,10 @@ import SequenceFixer from '@/common/components/elements/SequenceFixer';
 import StorageStatus from '@/common/components/elements/StorageStatus';
 import TempImageWarning from '@/common/components/elements/TempImageWarning';
 import { STACKS } from '@/common/constant/stacks';
+import {
+  getYouTubeThumbnail,
+  isYouTubeUrl,
+} from '@/common/helpers/youtubeHelper';
 import { useImageUpload } from '@/common/hooks/useImageUpload';
 import { ProjectItemProps } from '@/common/types/projects';
 import { deleteProjectImage, getPathFromUrl } from '@/services/imageUpload';
@@ -88,6 +92,28 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
       [name]:
         type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
+  };
+
+  const handleDemoLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const demoLink = e.target.value;
+
+    // Update demo link
+    setFormData((prev) => ({
+      ...prev,
+      link_demo: demoLink,
+    }));
+
+    // Auto-fill image if it's a YouTube URL and image field is empty
+    if (isYouTubeUrl(demoLink) && !formData.image) {
+      const thumbnail = getYouTubeThumbnail(demoLink);
+      if (thumbnail) {
+        setFormData((prev) => ({
+          ...prev,
+          image: thumbnail,
+        }));
+        toast.success('YouTube thumbnail auto-filled!');
+      }
+    }
   };
 
   const generateSlug = (title: string) => {
@@ -373,10 +399,16 @@ const ProjectForm = ({ project, onSuccess, onCancel }: ProjectFormProps) => {
                 type='url'
                 name='link_demo'
                 value={formData.link_demo}
-                onChange={handleInputChange}
+                onChange={handleDemoLinkChange}
                 className='mt-1 block w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white dark:placeholder-neutral-400'
-                placeholder='https://demo.example.com'
+                placeholder='https://demo.example.com or https://youtube.com/watch?v=...'
               />
+              {isYouTubeUrl(formData.link_demo) && (
+                <p className='mt-1 text-xs text-blue-600 dark:text-blue-400'>
+                  YouTube link detected - Thumbnail will auto-fill if image is
+                  empty
+                </p>
+              )}
             </div>
 
             <div>

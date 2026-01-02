@@ -97,3 +97,6 @@ export const calculateReadingTime = (
   const readingTimeMinutes = Math.ceil(words.length / wordsPerMinute);
   return Math.max(1, readingTimeMinutes); // Minimum 1 minute
 };
+
+// Export YouTube helpers
+export * from './youtubeHelper';
