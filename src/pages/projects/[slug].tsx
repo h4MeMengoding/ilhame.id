@@ -51,7 +51,16 @@ const ProjectsDetailPage: NextPage<ProjectsDetailPageProps> = ({ project }) => {
 
 export default ProjectsDetailPage;
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  res,
+}) => {
+  // Disable caching to ensure fresh data
+  res.setHeader(
+    'Cache-Control',
+    'no-cache, no-store, must-revalidate, max-age=0',
+  );
+
   const response = await prisma.projects.findUnique({
     where: {
       slug: String(params?.slug),

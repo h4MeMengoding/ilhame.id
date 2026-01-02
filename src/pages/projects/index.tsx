@@ -1,4 +1,4 @@
-import { GetStaticProps, NextPage } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 import { NextSeo } from 'next-seo';
 import { useState } from 'react';
 
@@ -39,7 +39,7 @@ const ProjectsPage: NextPage<ProjectsPageProps> = ({ projects }) => {
 
 export default ProjectsPage;
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const response = await prisma.projects.findMany({
     orderBy: [
       {
@@ -55,6 +55,5 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       projects: JSON.parse(JSON.stringify(response)),
     },
-    revalidate: 300, // 5 minutes ISR
   };
 };
