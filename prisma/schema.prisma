@@ -22,9 +22,36 @@ model Blog {
   updated_at         DateTime  @default(now())
   published_at       DateTime?
   is_featured        Boolean   @default(false)
+  meta_title         String?
+  meta_description   String?   @db.Text
+  reading_time       Int?
   comments           Comment[]
+  tags               BlogTag[]
 
   @@map("blogs")
+}
+
+model Tag {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  slug        String    @unique
+  description String?   @db.Text
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @default(now())
+  blogs       BlogTag[]
+
+  @@map("tags")
+}
+
+model BlogTag {
+  blog_id    Int
+  tag_id     Int
+  blog       Blog     @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+  tag        Tag      @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+
+  @@id([blog_id, tag_id])
+  @@map("blog_tags")
 }
 
 model Comment {

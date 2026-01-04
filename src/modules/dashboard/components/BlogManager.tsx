@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { FiEdit, FiEye, FiPlus, FiRefreshCw, FiTrash2 } from 'react-icons/fi';
+import {
+  FiEdit,
+  FiEye,
+  FiPlus,
+  FiRefreshCw,
+  FiTag,
+  FiTrash2,
+} from 'react-icons/fi';
 import useSWR from 'swr';
 
 import Card from '@/common/components/elements/Card';
@@ -163,6 +170,15 @@ const BlogManager = () => {
           </SectionSubHeading>
         </div>
         <div className='flex flex-col space-y-2 sm:flex-row sm:space-x-2 sm:space-y-0'>
+          <a
+            href='/dashboard/tags'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='flex w-full items-center justify-center space-x-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-neutral-700 transition-colors hover:bg-neutral-50 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 sm:w-auto'
+          >
+            <FiTag className='h-4 w-4' />
+            <span>Manage Tags</span>
+          </a>
           <button
             onClick={handleHardSync}
             disabled={isRefreshing}

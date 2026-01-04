@@ -33,13 +33,13 @@ const MDXComponent = ({ children }: MarkdownRendererProps) => {
         p: (props) => <div {...props} />,
         h2: (props) => (
           <h2
-            className='text-xl font-medium dark:text-neutral-300'
+            className='border-l-4 border-l-blue-500 pl-4 text-xl font-medium dark:border-l-blue-400 dark:text-neutral-300'
             {...props}
           />
         ),
         h3: (props) => (
           <h3
-            className='pt-4 text-[18px] font-medium leading-snug dark:text-neutral-300'
+            className='border-l-4 border-l-blue-500 pl-4 pt-4 text-[18px] font-medium leading-snug dark:border-l-blue-400 dark:text-neutral-300'
             {...props}
           />
         ),

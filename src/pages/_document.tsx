@@ -23,6 +23,14 @@ export default function Document() {
           crossOrigin='anonymous'
         />
 
+        {/* RSS Feed */}
+        <link
+          rel='alternate'
+          type='application/rss+xml'
+          title='Ilham Shofa Blog RSS Feed'
+          href='https://ilhame.id/api/rss.xml'
+        />
+
         {/* Preload critical CSS and fonts */}
         <link
           rel='preload'

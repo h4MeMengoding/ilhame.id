@@ -41,15 +41,18 @@ export function withAuth<T = any>(
     const token = getTokenFromRequest(req);
 
     if (!token) {
+      console.log('[withAuth] No token provided');
       return res.status(401).json({ error: 'Authentication token required' });
     }
 
     const user = verifyToken(token);
 
     if (!user) {
+      console.log('[withAuth] Invalid token');
       return res.status(401).json({ error: 'Invalid or expired token' });
     }
 
+    console.log('[withAuth] User authenticated:', user.email);
     (req as AuthenticatedRequest).user = user;
 
     return handler(req as AuthenticatedRequest, res);

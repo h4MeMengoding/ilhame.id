@@ -10,6 +10,8 @@ async function handler(req: AuthenticatedRequest, res: NextApiResponse) {
   }
 
   try {
+    console.log('[/api/auth/me] User ID:', req.user?.userId);
+
     const user = await prisma.user.findUnique({
       where: { id: req.user.userId },
       select: {
@@ -23,12 +25,14 @@ async function handler(req: AuthenticatedRequest, res: NextApiResponse) {
     });
 
     if (!user) {
+      console.log('[/api/auth/me] User not found for ID:', req.user.userId);
       return res.status(404).json({ error: 'User not found' });
     }
 
+    console.log('[/api/auth/me] User found:', user.email);
     res.status(200).json({ user });
   } catch (error) {
-    console.error('Get user error:', error);
+    console.error('[/api/auth/me] Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }

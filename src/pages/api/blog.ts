@@ -52,6 +52,11 @@ export default async function handler(
                 email: true,
               },
             },
+            tags: {
+              include: {
+                tag: true,
+              },
+            },
           },
           orderBy: {
             published_at: 'desc',
@@ -92,6 +97,9 @@ export default async function handler(
             featured_image_url:
               blog.featured_image_url || '/images/placeholder.png',
             total_views_count: contentMeta?.views || 0,
+            tags_list: blog.tags?.map((bt: any) => bt.tag.slug) || [],
+            tags: blog.tags?.map((bt: any) => bt.tag) || [],
+            reading_time: blog.reading_time,
           };
         }),
       );

@@ -5,6 +5,7 @@ import { FiArrowLeft, FiSave, FiX } from 'react-icons/fi';
 import Card from '@/common/components/elements/Card';
 import RichTextEditor from '@/common/components/elements/RichTextEditor';
 import SectionHeading from '@/common/components/elements/SectionHeading';
+import TagSelector from './TagSelector';
 
 interface Blog {
   id: number;
@@ -15,6 +16,14 @@ interface Blog {
   featured_image_url?: string;
   status: 'draft' | 'published';
   is_featured: boolean;
+  meta_title?: string;
+  meta_description?: string;
+  tags?: Array<{
+    tag: {
+      id: number;
+      name: string;
+    };
+  }>;
 }
 
 interface BlogFormProps {
@@ -32,6 +41,9 @@ const BlogForm = ({ blog, onSuccess, onCancel }: BlogFormProps) => {
     featured_image_url: blog?.featured_image_url || '',
     status: blog?.status || 'draft',
     is_featured: blog?.is_featured || false,
+    meta_title: blog?.meta_title || '',
+    meta_description: blog?.meta_description || '',
+    tag_ids: blog?.tags?.map((t) => t.tag.id) || [],
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(
@@ -246,6 +258,73 @@ const BlogForm = ({ blog, onSuccess, onCancel }: BlogFormProps) => {
               className='mt-1 block w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white dark:placeholder-neutral-400'
               placeholder='Brief description of the post...'
             />
+          </div>
+
+          {/* SEO Fields */}
+          <div className='space-y-4 rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-800/50'>
+            <h3 className='text-sm font-semibold text-neutral-900 dark:text-white'>
+              SEO Optimization
+            </h3>
+
+            <div>
+              <label className='block text-sm font-medium text-neutral-700 dark:text-neutral-300'>
+                Meta Title
+              </label>
+              <input
+                type='text'
+                value={formData.meta_title}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    meta_title: e.target.value,
+                  }))
+                }
+                maxLength={60}
+                className='mt-1 block w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white dark:placeholder-neutral-400'
+                placeholder='SEO title for search engines (optional, defaults to post title)'
+              />
+              <p className='mt-1 text-xs text-neutral-500 dark:text-neutral-400'>
+                {formData.meta_title.length}/60 characters - Optimal: 50-60
+              </p>
+            </div>
+
+            <div>
+              <label className='block text-sm font-medium text-neutral-700 dark:text-neutral-300'>
+                Meta Description
+              </label>
+              <textarea
+                value={formData.meta_description}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    meta_description: e.target.value,
+                  }))
+                }
+                maxLength={160}
+                rows={2}
+                className='mt-1 block w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white dark:placeholder-neutral-400'
+                placeholder='SEO description for search results (optional, defaults to excerpt)'
+              />
+              <p className='mt-1 text-xs text-neutral-500 dark:text-neutral-400'>
+                {formData.meta_description.length}/160 characters - Optimal:
+                150-160
+              </p>
+            </div>
+
+            <div>
+              <label className='block text-sm font-medium text-neutral-700 dark:text-neutral-300'>
+                Tags
+              </label>
+              <TagSelector
+                selectedTagIds={formData.tag_ids}
+                onChange={(tagIds) =>
+                  setFormData((prev) => ({ ...prev, tag_ids: tagIds }))
+                }
+              />
+              <p className='mt-1 text-xs text-neutral-500 dark:text-neutral-400'>
+                Select relevant tags to improve SEO and content discoverability
+              </p>
+            </div>
           </div>
 
           {/* Featured Image URL */}

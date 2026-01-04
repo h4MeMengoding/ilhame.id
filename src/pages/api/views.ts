@@ -31,6 +31,29 @@ export default async function handler(
     }
   } else if (req.method === 'POST') {
     try {
+      // Cookie name untuk tracking views
+      const cookieName = `viewed_${slug}`;
+      const cookies = req.headers.cookie || '';
+
+      // Check apakah user sudah pernah view artikel ini (via cookie)
+      const hasViewedCookie = cookies.includes(cookieName);
+
+      // Check dari localStorage indicator (sent via header)
+      const hasViewedLocalStorage = req.headers['x-has-viewed'] === 'true';
+
+      // Jika sudah pernah view (dari cookie atau localStorage), return current count tanpa increment
+      if (hasViewedCookie || hasViewedLocalStorage) {
+        const contentMeta = await prisma.contentmeta.findUnique({
+          where: { slug: slug as string },
+          select: { views: true },
+        });
+        return res.json({
+          views: contentMeta?.views ?? 0,
+          incremented: false,
+        });
+      }
+
+      // Increment views karena ini view baru
       const contentMeta = await prisma.contentmeta.update({
         where: { slug: slug as string },
         data: {
@@ -40,7 +63,14 @@ export default async function handler(
         },
         select: { views: true },
       });
-      return res.json(contentMeta);
+
+      // Set cookie untuk 24 jam (86400 seconds)
+      res.setHeader(
+        'Set-Cookie',
+        `${cookieName}=true; Path=/; Max-Age=86400; SameSite=Lax`,
+      );
+
+      return res.json({ ...contentMeta, incremented: true });
     } catch (error) {
       return res.status(500).json({ error: 'Failed to update views count' });
     }

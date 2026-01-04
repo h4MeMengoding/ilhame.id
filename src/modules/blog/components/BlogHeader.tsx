@@ -1,9 +1,5 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { FaRegEye as ViewIcon } from 'react-icons/fa';
-import { HiOutlineClock as ClockIcon } from 'react-icons/hi';
-
-import { formatDate } from '@/common/helpers';
 
 interface BlogHeaderProps {
   title: string;
@@ -13,12 +9,7 @@ interface BlogHeaderProps {
   published_at?: string;
 }
 
-const BlogHeader = ({
-  title,
-  page_views_count,
-  published_at,
-  reading_time_minutes,
-}: BlogHeaderProps) => {
+const BlogHeader = ({ title }: BlogHeaderProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -45,7 +36,7 @@ const BlogHeader = ({
     <>
       {!isScrolled ? (
         <motion.h1
-          className='text-2xl font-semibold'
+          className='mb-8 text-3xl font-bold lg:text-4xl'
           initial='initial'
           animate='animate'
           variants={titleVariants}
@@ -64,31 +55,6 @@ const BlogHeader = ({
           <h1 className='text-lg font-semibold lg:text-xl'>{title}</h1>
         </motion.div>
       )}
-      <div className='mb-6 flex flex-col justify-between gap-2 border-b border-dashed border-neutral-600 pb-6 pt-5 text-[14px] text-neutral-600 dark:text-neutral-400 sm:flex-row'>
-        <div>
-          Published on
-          <span className='px-1 font-medium'>
-            {published_at ? formatDate(published_at) : ''}
-          </span>
-        </div>
-
-        <div className='flex items-center gap-5'>
-          <div className='flex items-center gap-1 font-medium'>
-            <ViewIcon size={16} />
-            <div className='ml-0.5 flex gap-1'>
-              <span>{page_views_count || 0}</span>
-              <span>View</span>
-            </div>
-          </div>
-          <div className='flex items-center gap-1 font-medium'>
-            <ClockIcon size={16} />
-            <div className='ml-0.5 flex gap-1'>
-              <span>{reading_time_minutes}</span>
-              <span>Min Read</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </>
   );
 };

@@ -55,21 +55,28 @@ const CodeBlock = ({
     }
   }, [isCopied]);
 
+  // Check if code is single line
+  const codeString = String(children).replace(/\n$/, '');
+  const lineCount = codeString.split('\n').length;
+  const isSingleLine = lineCount <= 1;
+
   return (
     <>
       {!inline ? (
-        <div className='relative'>
+        <div className='group relative'>
           <button
-            className='absolute right-3 top-3 rounded-lg border border-neutral-700 p-2 hover:bg-neutral-800'
+            className={`absolute right-3 z-10 rounded-lg border border-neutral-600 bg-neutral-700 p-2 opacity-0 transition-all hover:bg-neutral-600 group-hover:opacity-100 ${
+              isSingleLine ? 'top-1/2 -translate-y-1/2' : 'top-3'
+            }`}
             type='button'
             aria-label='Copy to Clipboard'
             onClick={() => handleCopy(children.toString())}
             data-umami-event='Mengklik Salin Kode'
           >
             {!isCopied ? (
-              <CopyIcon size={18} className='text-neutral-400' />
+              <CopyIcon size={18} className='text-neutral-200' />
             ) : (
-              <CheckIcon size={18} className='text-green-600' />
+              <CheckIcon size={18} className='text-green-400' />
             )}
           </button>
 
@@ -86,7 +93,7 @@ const CodeBlock = ({
             language={match ? match[1] : 'javascript'}
             wrapLongLines={true}
           >
-            {String(children).replace(/\n$/, '')}
+            {codeString}
           </SyntaxHighlighter>
         </div>
       ) : (

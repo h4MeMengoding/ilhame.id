@@ -31,6 +31,11 @@ async function handler(
               email: true,
             },
           },
+          tags: {
+            include: {
+              tag: true,
+            },
+          },
         },
       });
 
@@ -56,6 +61,9 @@ async function handler(
         featured_image_url,
         status,
         is_featured,
+        meta_title,
+        meta_description,
+        tag_ids = [],
       } = req.body;
 
       if (!title || !slug || !content) {
@@ -85,6 +93,10 @@ async function handler(
         return res.status(404).json({ error: 'Blog not found' });
       }
 
+      // Calculate reading time (average 200 words per minute)
+      const wordCount = content.trim().split(/\s+/).length;
+      const reading_time = Math.ceil(wordCount / 200);
+
       const updateData: any = {
         title,
         slug,
@@ -93,6 +105,9 @@ async function handler(
         featured_image_url,
         status,
         is_featured,
+        meta_title: meta_title || null,
+        meta_description: meta_description || null,
+        reading_time,
         updated_at: new Date(),
       };
 
@@ -104,12 +119,38 @@ async function handler(
       const updatedBlog = await (prisma as any).blog.update({
         where: { id: blogId },
         data: updateData,
+      });
+
+      // Update tags
+      // First, delete all existing tag relations
+      await (prisma as any).blogTag.deleteMany({
+        where: { blog_id: blogId },
+      });
+
+      // Then create new tag relations
+      if (tag_ids && tag_ids.length > 0) {
+        await (prisma as any).blogTag.createMany({
+          data: tag_ids.map((tagId: number) => ({
+            blog_id: blogId,
+            tag_id: tagId,
+          })),
+        });
+      }
+
+      // Fetch with relations separately to avoid null issues
+      const blogWithRelations = await (prisma as any).blog.findUnique({
+        where: { id: blogId },
         include: {
           author: {
             select: {
               id: true,
               name: true,
               email: true,
+            },
+          },
+          tags: {
+            include: {
+              tag: true,
             },
           },
         },
@@ -125,7 +166,7 @@ async function handler(
 
       res.status(200).json({
         status: true,
-        data: updatedBlog,
+        data: blogWithRelations,
       });
     } catch (error) {
       console.error('Error updating blog:', error);

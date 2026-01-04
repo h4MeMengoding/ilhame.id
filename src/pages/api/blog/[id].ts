@@ -29,6 +29,11 @@ export default async function handler(
               email: true,
             },
           },
+          tags: {
+            include: {
+              tag: true,
+            },
+          },
         },
       });
 
@@ -80,6 +85,11 @@ export default async function handler(
         author: blog.author.name || blog.author.email,
         featured_image_url:
           blog.featured_image_url || '/images/placeholder.png',
+        tags_list: blog.tags?.map((bt: any) => bt.tag.slug) || [],
+        tags: blog.tags?.map((bt: any) => bt.tag) || [],
+        reading_time: blog.reading_time,
+        meta_title: blog.meta_title,
+        meta_description: blog.meta_description,
       };
 
       res.status(200).json({

@@ -43,9 +43,10 @@ async function handler(
               },
             },
           },
-          orderBy: {
-            updated_at: 'desc',
-          },
+          orderBy: [
+            { status: 'desc' }, // published first (alphabetically 'published' > 'draft')
+            { created_at: 'desc' }, // then by newest first
+          ],
           skip,
           take: perPageNum,
         }),
@@ -106,6 +107,9 @@ async function handler(
         featured_image_url,
         status = 'draft',
         is_featured = false,
+        meta_title,
+        meta_description,
+        tag_ids = [],
       } = req.body;
 
       if (!title || !slug || !content) {
@@ -123,6 +127,10 @@ async function handler(
         return res.status(400).json({ error: 'Slug already exists' });
       }
 
+      // Calculate reading time (average 200 words per minute)
+      const wordCount = content.trim().split(/\s+/).length;
+      const reading_time = Math.ceil(wordCount / 200);
+
       const blogData = {
         title,
         slug,
@@ -131,12 +139,39 @@ async function handler(
         featured_image_url,
         status,
         is_featured,
+        meta_title: meta_title || null,
+        meta_description: meta_description || null,
+        reading_time,
         author_id: req.user.userId,
         published_at: status === 'published' ? new Date() : null,
       };
 
+      // First verify the user exists
+      const userExists = await (prisma as any).user.findUnique({
+        where: { id: req.user.userId },
+      });
+
+      if (!userExists) {
+        return res.status(400).json({ error: 'Invalid user' });
+      }
+
       const newBlog = await (prisma as any).blog.create({
         data: blogData,
+      });
+
+      // Create blog-tag relations
+      if (tag_ids && tag_ids.length > 0) {
+        await (prisma as any).blogTag.createMany({
+          data: tag_ids.map((tagId: number) => ({
+            blog_id: newBlog.id,
+            tag_id: tagId,
+          })),
+        });
+      }
+
+      // Fetch the blog with relations separately to avoid null issues
+      const blogWithAuthor = await (prisma as any).blog.findUnique({
+        where: { id: newBlog.id },
         include: {
           author: {
             select: {
@@ -145,12 +180,19 @@ async function handler(
               email: true,
             },
           },
+          tags: {
+            include: {
+              tag: true,
+            },
+          },
         },
       });
 
       // Create content meta for views tracking
-      await prisma.contentmeta.create({
-        data: {
+      await prisma.contentmeta.upsert({
+        where: { slug: newBlog.slug },
+        update: {},
+        create: {
           slug: newBlog.slug,
           type: 'blog',
           views: 0,
@@ -159,7 +201,7 @@ async function handler(
 
       res.status(201).json({
         status: true,
-        data: newBlog,
+        data: blogWithAuthor,
       });
     } catch (error) {
       console.error('Error creating blog:', error);

@@ -51,7 +51,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           Authorization: `Bearer ${token}`,
         },
       })
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) {
+            console.error(
+              '[AuthContext] /api/auth/me failed:',
+              res.status,
+              res.statusText,
+            );
+            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+          }
+          return res.json();
+        })
         .then((data) => {
           if (data.user) {
             setUser(data.user);
@@ -73,8 +83,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
           }
         })
-        .catch(() => {
+        .catch((error) => {
           // Network error or token verification failed
+          console.error('[AuthContext] Error verifying token:', error);
           localStorage.removeItem('auth_token');
           document.cookie =
             'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
