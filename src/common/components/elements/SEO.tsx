@@ -18,7 +18,7 @@ const SEO = ({
   title = 'Ilham Shofa - Videographer & Photographer',
   description = 'Passionate about videography, photography, and creative editing, combining my love for cameras with storytelling through visuals.',
   canonical = 'https://ilhame.id',
-  image = 'https://i.imgur.com/fj8knf5.png',
+  image = 'https://res.cloudinary.com/dgbg05oc5/image/upload/v1767529742/og-ilhameid_ootgmj.webp',
   type = 'website',
   structuredData,
   keywords = 'videographer, photographer, creative editing, visual storytelling, content creator, ilham shofa',

@@ -1,5 +1,6 @@
 const canonicalUrl = 'https://ilhame.id';
-const metaImage = 'https://i.imgur.com/fj8knf5.png';
+const metaImage =
+  'https://res.cloudinary.com/dgbg05oc5/image/upload/v1767529742/og-ilhameid_ootgmj.webp';
 const metaDescription =
   'Ilham Shofa - Creative, Code and Tech Enthusiast passionate about web development, photography, and videography.';
 

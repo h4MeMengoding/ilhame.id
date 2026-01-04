@@ -46,7 +46,7 @@ const generateRssFeed = (posts: any[]): string => {
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="https://ilhame.id/api/rss.xml" rel="self" type="application/rss+xml" />
     <image>
-      <url>https://i.imgur.com/fj8knf5.png</url>
+      <url>https://res.cloudinary.com/dgbg05oc5/image/upload/v1767529742/og-ilhameid_ootgmj.webp</url>
       <title>Ilham Shofa Blog</title>
       <link>https://ilhame.id</link>
     </image>

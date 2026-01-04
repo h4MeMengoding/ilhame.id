@@ -36,7 +36,7 @@ const AboutPage: NextPage = () => {
           description: PAGE_DESCRIPTION,
           images: [
             {
-              url: 'https://i.imgur.com/fj8knf5.png',
+              url: 'https://res.cloudinary.com/dgbg05oc5/image/upload/v1767529742/og-ilhameid_ootgmj.webp',
               width: 1200,
               height: 630,
               alt: 'Ilham Shofa',

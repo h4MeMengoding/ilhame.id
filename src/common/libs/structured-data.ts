@@ -4,7 +4,8 @@ export const generatePersonSchema = () => ({
   '@type': 'Person',
   name: 'Ilham Shofa',
   url: 'https://ilhame.id',
-  image: 'https://i.imgur.com/fj8knf5.png',
+  image:
+    'https://res.cloudinary.com/dgbg05oc5/image/upload/v1767529742/og-ilhameid_ootgmj.webp',
   sameAs: [
     'https://github.com/h4MeMengoding',
     'https://instagram.com/ilham.shff',
@@ -69,7 +70,9 @@ export const generateBlogSchema = (blogData: any) => ({
   '@type': 'BlogPosting',
   headline: blogData.title,
   description: blogData.description || blogData.excerpt,
-  image: blogData.featured_image_url || 'https://i.imgur.com/fj8knf5.png',
+  image:
+    blogData.featured_image_url ||
+    'https://res.cloudinary.com/dgbg05oc5/image/upload/v1767529742/og-ilhameid_ootgmj.webp',
   datePublished: blogData.date,
   dateModified: blogData.modified || blogData.date,
   author: {
@@ -82,7 +85,7 @@ export const generateBlogSchema = (blogData: any) => ({
     name: 'Ilham Shofa',
     logo: {
       '@type': 'ImageObject',
-      url: 'https://i.imgur.com/fj8knf5.png',
+      url: 'https://res.cloudinary.com/dgbg05oc5/image/upload/v1767529742/og-ilhameid_ootgmj.webp',
     },
   },
   mainEntityOfPage: {
@@ -137,7 +140,7 @@ export const generateOrganizationSchema = () => ({
   name: 'Ilham Shofa',
   alternateName: 'ilhame.id',
   url: 'https://ilhame.id',
-  logo: 'https://i.imgur.com/fj8knf5.png',
+  logo: 'https://res.cloudinary.com/dgbg05oc5/image/upload/v1767529742/og-ilhameid_ootgmj.webp',
   description:
     'Personal portfolio and blog of Ilham Shofa - Code the Future & Capture the Moment',
   foundingDate: '2023',

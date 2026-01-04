@@ -112,7 +112,8 @@ export default function Document() {
                 '@type': 'Person',
                 name: 'Ilham Shofa',
                 url: 'https://ilhame.id',
-                image: 'https://i.imgur.com/fj8knf5.png',
+                image:
+                  'https://res.cloudinary.com/dgbg05oc5/image/upload/v1767529742/og-ilhameid_ootgmj.webp',
                 sameAs: [
                   'https://github.com/h4MeMengoding',
                   'https://instagram.com/ilham.shff',
@@ -178,7 +179,7 @@ export default function Document() {
                 name: 'Ilham Shofa',
                 alternateName: 'ilhame.id',
                 url: 'https://ilhame.id',
-                logo: 'https://i.imgur.com/fj8knf5.png',
+                logo: 'https://res.cloudinary.com/dgbg05oc5/image/upload/v1767529742/og-ilhameid_ootgmj.webp',
                 description:
                   'Personal portfolio and blog of Ilham Shofa - Code the Future & Capture the Moment',
                 foundingDate: '2023',

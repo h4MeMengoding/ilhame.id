@@ -100,7 +100,7 @@ const BlogDetailPage: NextPage<BlogDetailPageProps> = ({ blog }) => {
             {
               url:
                 blogData?.featured_image_url ||
-                'https://i.imgur.com/fj8knf5.png',
+                'https://res.cloudinary.com/dgbg05oc5/image/upload/v1767529742/og-ilhameid_ootgmj.webp',
               width: 1200,
               height: 630,
               alt: blogData?.title?.rendered,
@@ -120,14 +120,15 @@ const BlogDetailPage: NextPage<BlogDetailPageProps> = ({ blog }) => {
         url={canonicalUrl}
         title={blogData?.title?.rendered}
         images={[
-          blogData?.featured_image_url || 'https://i.imgur.com/fj8knf5.png',
+          blogData?.featured_image_url ||
+            'https://res.cloudinary.com/dgbg05oc5/image/upload/v1767529742/og-ilhameid_ootgmj.webp',
         ]}
         datePublished={blogData?.date}
         dateModified={blogData?.modified || blogData?.date}
         authorName='Ilham Shofa'
         description={description}
         publisherName='Ilham Shofa'
-        publisherLogo='https://i.imgur.com/fj8knf5.png'
+        publisherLogo='https://res.cloudinary.com/dgbg05oc5/image/upload/v1767529742/og-ilhameid_ootgmj.webp'
       />
 
       <BreadcrumbJsonLd
