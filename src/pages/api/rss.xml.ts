@@ -30,7 +30,6 @@ const generateRssItem = (post: any): string => {
       <description><![CDATA[${post.excerpt || ''}]]></description>
       <pubDate>${new Date(post.created_at).toUTCString()}</pubDate>
       <author>ilhamshofa@gmail.com (Ilham Shofa)</author>
-      ${post.featured_image_url ? `<enclosure url="${escapeXml(post.featured_image_url)}" type="image/jpeg" />` : ''}
       ${post.tags?.map((tag: any) => `<category><![CDATA[${tag.tag.name}]]></category>`).join('\n      ') || ''}
     </item>
   `;
@@ -82,7 +81,10 @@ export default async function handler(
       const rss = generateRssFeed(posts);
 
       res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-      res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
+      res.setHeader(
+        'Cache-Control',
+        's-maxage=600, stale-while-revalidate=3600',
+      );
       res.status(200).send(rss);
     } catch (error) {
       console.error('Error generating RSS feed:', error);
